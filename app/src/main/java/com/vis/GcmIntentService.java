@@ -30,6 +30,7 @@ import android.util.Log;
 
 import com.google.gson.JsonSyntaxException;
 import com.vis.Analytics.TrackerName;
+import com.vis.activities.MainActivity;
 import com.vis.activities.MyActivity;
 import com.vis.beans.NotificationMessage;
 import com.vis.utilities.Constants;
@@ -128,7 +129,7 @@ public class GcmIntentService extends IntentService {
 			Gson gson = new Gson();
 			NotificationMessage notification = gson.fromJson(notificationMessage, NotificationMessage.class);
 			Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-			Intent intent = new Intent(this, MyActivity.class);
+			Intent intent = new Intent(this, MainActivity.class);
 			intent.putExtra("NOTIFICATION", notificationMessage);
 			intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -139,7 +140,7 @@ public class GcmIntentService extends IntentService {
 			NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(this)
             .setSmallIcon(R.mipmap.ic_launcher)
-							.setContentTitle("VideoEntry in Short")
+							.setContentTitle("Video in Short")
 							.setSound(alarmSound)
 							.setAutoCancel(true)
 							.setStyle(new NotificationCompat.BigTextStyle()

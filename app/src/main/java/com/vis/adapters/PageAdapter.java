@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,6 +70,7 @@ public class PageAdapter extends BaseAdapter {
     private ImageLoadingListener animateFirstListener;
     DisplayImageOptions options;
     ImageLoader imageLoader;
+    int width,height;
 
 
     public PageAdapter(Context context, List<VideoEntry> entries , FbProfile fbProfile) {
@@ -76,7 +78,9 @@ public class PageAdapter extends BaseAdapter {
         inflater = LayoutInflater.from(context);
         mContext = context;
         this.fbProfile = fbProfile;
-
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        width = displayMetrics.widthPixels;
+        height = displayMetrics.heightPixels;
         animateFirstListener = new AnimateFirstDisplayListener();
         imageLoader =ImageLoader.getInstance();
         initImageLoader(context,imageLoader);
@@ -127,6 +131,12 @@ public class PageAdapter extends BaseAdapter {
              thumbnail = (ImageView) view.findViewById(R.id.imagethumbnail);
 
         }
+        int heightScaled = width * 75 / 100;
+        thumbnail.getLayoutParams().height = heightScaled;
+
+        thumbnail.getLayoutParams().width = width;
+        thumbnail.requestLayout();
+
         TextView label = ((TextView) view.findViewById(R.id.text));
         ImageButton fbShare = (ImageButton)view.findViewById(R.id.share_facebook);
         ImageButton twitterShare = (ImageButton)view.findViewById(R.id.share_twitter);
