@@ -82,13 +82,14 @@ public class MainFragment extends Fragment {
                                 fbProfile.setFbProfileLink("http://www.facebook.com/" + fbProfile.getFbUserId());
                                 fbProfile.setProfileImagePath("http://graph.facebook.com/"+fbProfile.getFbUserId()+"/picture?type=large");
                                 String fbUserInfo = gson.toJson(fbProfile);
-                                Log.d("vis",fbUserInfo);
+                                Log.d("vis", fbUserInfo);
                                 edit.putString(Constants.FB_USER_INFO, fbUserInfo);
                                 edit.commit();
+
+                                getActivity().finish();
                                 Intent intent = new Intent(getActivity(), MainActivity.class);
                                 intent.putExtra(Constants.FB_USER_INFO, fbUserInfo);
                                 startActivity(intent);
-                                getActivity().finish();
 
                             }
                             System.out.println("response---->>" + object);
@@ -181,9 +182,10 @@ public class MainFragment extends Fragment {
 
         if (getActivity() != null) {
             if (newToken != null) {
+                getActivity().finish();
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 startActivity(intent);
-                getActivity().finish();
+
             } else {
                 Intent intent = new Intent("finish_activity");
                 getActivity().sendBroadcast(intent);

@@ -7,8 +7,10 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -76,19 +78,24 @@ public class PageAdapter extends BaseAdapter {
     ImageLoader imageLoader;
     int width,height;
     Tracker mTracker;
-
+    String appPackageName;
 
     public PageAdapter(Context context, List<VideoEntry> entries , FbProfile fbProfile) {
         this.entries = entries;
         inflater = LayoutInflater.from(context);
         mContext = context;
         this.fbProfile = fbProfile;
+
+        
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         width = displayMetrics.widthPixels;
         height = (width * 75 )/100;
+
+
         animateFirstListener = new AnimateFirstDisplayListener();
         imageLoader =ImageLoader.getInstance();
         initImageLoader(context,imageLoader);
+        appPackageName = mContext.getPackageName();
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.loading_spinner)
                 .showImageForEmptyUri(R.drawable.ic_empty)
@@ -155,7 +162,9 @@ public class PageAdapter extends BaseAdapter {
         ImageButton watsappShare = (ImageButton)view.findViewById(R.id.share_watsapp);
         fbShare.setTag(entry.getVideoId());
       //  twitterShare.setTag(entry.getVideoId());
-        watsappShare.setTag(entry.getVideoId());
+
+        watsappShare.setTag(entry.getVideoId()+"|"+entry.getPostTitle());
+
         thumbnail.setTag(entry.getVideoId());
 
         thumbnail.setOnClickListener(new View.OnClickListener() {
@@ -182,7 +191,12 @@ public class PageAdapter extends BaseAdapter {
         watsappShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareOnWatsapp((String) v.getTag());
+                try {
+                    String tags[] = ((String)v.getTag()).split("|");
+                    shareOnWatsapp(tags[0],tags[1]);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -202,7 +216,7 @@ public class PageAdapter extends BaseAdapter {
         new WebServiceUtility(mContext,Constants.SHARE_DATA,videoViewBean);
 
     }
-    private void shareOnWatsapp(String videoId)
+    private void shareOnWatsapp(String videoId,String videoTitle)
     {
 
 
@@ -215,10 +229,10 @@ public class PageAdapter extends BaseAdapter {
 
                 .build());
         try {
-            String youtubeTag = "http://www.youtube.com/watch?v="+videoId;
+            String message = "To watch "+videoTitle+", install Vint app https://play.google.com/store/apps/details?id=" + appPackageName;
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, youtubeTag);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, message);
             sendIntent.setType("text/plain");
             sendIntent.setPackage("com.whatsapp");
             mContext.startActivity(sendIntent);
@@ -234,7 +248,7 @@ public class PageAdapter extends BaseAdapter {
 
     public void shareOnFacebook(String videoAddress) {
 
-
+        String appUrl = "https://play.google.com/store/apps/details?id=" + appPackageName;
         mTracker.enableAdvertisingIdCollection(true);
         // Build and send an Event.
         mTracker.send(new HitBuilders.EventBuilder()
@@ -245,7 +259,7 @@ public class PageAdapter extends BaseAdapter {
                 .build());
        ShareDialog shareDialog = new ShareDialog((MainActivity)mContext);
         String youtubeTag = "http://www.youtube.com/watch?v="+videoAddress;
-        String id = videoAddress;
+
         if (ShareDialog.canShow(ShareLinkContent.class)) {
 
             VideoViewBean videoViewBean = new VideoViewBean();
@@ -254,17 +268,17 @@ public class PageAdapter extends BaseAdapter {
             videoViewBean.setType(Constants.FACEBOOK);
             new WebServiceUtility(mContext,Constants.SHARE_DATA,videoViewBean);
 
-            ShareVideoContent videoContent = new ShareVideoContent.Builder()
+            /*ShareVideoContent videoContent = new ShareVideoContent.Builder()
                     .setContentUrl(Uri.parse(youtubeTag))
                     .setContentTitle("Video in Short")
                     .setPreviewPhoto(new SharePhoto.Builder().setImageUrl(Uri.parse("http://img.youtube.com/vi/" + id + "/0.jpg")).build())
-                    .build();
-           /* String imageUrl = "http://img.youtube.com/vi/" + videoAddress + "/0.jpg";
+                    .build();*/
+           String imageUrl = "http://img.youtube.com/vi/" + videoAddress + "/0.jpg";
             ShareLinkContent linkContent = new ShareLinkContent.Builder()
                     .setContentTitle("Video in Short")
-                    .setImageUrl(Uri.parse("http://img.youtube.com/vi/" + id + "/0.jpg"))
-                    .setContentUrl(Uri.parse(youtubeTag))
-                    .build();*/
+                    .setImageUrl(Uri.parse(imageUrl))
+                    .setContentUrl(Uri.parse(appUrl))
+                    .build();
 
 
 
@@ -276,7 +290,7 @@ public class PageAdapter extends BaseAdapter {
                     .setVideo(video)
                     .build();
 
-            shareDialog.show(content);
+            shareDialog.show(linkContent);
 
         }
 

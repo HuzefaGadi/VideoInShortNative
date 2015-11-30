@@ -43,9 +43,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewPropertyAnimator;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -67,6 +71,7 @@ import com.google.android.youtube.player.YouTubePlayer.OnFullscreenListener;
 import com.google.gson.Gson;
 import com.vis.AlarmReceiver;
 import com.vis.Analytics;
+import com.vis.FacebookActivity;
 import com.vis.R;
 import com.vis.beans.FbProfile;
 import com.vis.beans.Registration;
@@ -139,6 +144,8 @@ public final class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.video_list_demo);
+
+
         toolbar = (Toolbar) findViewById(R.id.MyToolbar);
         setSupportActionBar(toolbar);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -508,7 +515,30 @@ public final class MainActivity extends AppCompatActivity {
         }
         return registrationId;
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, FacebookActivity.class);
+            intent.putExtra(Constants.MENU_SETTINGS, true);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
     /**
      * Registers the application with GCM servers asynchronously.
      * <p/>

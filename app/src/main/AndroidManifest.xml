@@ -25,6 +25,7 @@
     <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:supportsRtl="true"
         android:name=".Analytics"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
@@ -67,7 +68,7 @@
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
-            android:screenOrientation="landscape"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <service android:name=".GcmIntentService" />
@@ -102,7 +103,7 @@
             android:label="@string/title_activity_facebook"></activity>
         <activity
             android:name=".activities.MainActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/app_name"
             android:screenOrientation="landscape"></activity>
         <activity

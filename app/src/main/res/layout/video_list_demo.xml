@@ -16,15 +16,16 @@
             android:id="@+id/collapse_toolbar"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@color/material_deep_teal_500"
+            android:background="@color/toolbarcolor"
             android:fitsSystemWindows="true"
             app:layout_scrollFlags="scroll|snap">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/MyToolbar"
                 android:layout_width="match_parent"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin" />
+                app:layout_collapseMode="parallax" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
 

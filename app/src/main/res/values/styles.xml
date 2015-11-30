@@ -19,13 +19,32 @@
 
 <resources>
 
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/toolbarcolor</item>
+        <item name="colorPrimaryDark">@color/statusbarcolor</item>
+        <item name="colorAccent">@color/accentcolor</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
     <style name="AppTheme." parent="@style/Theme.AppCompat.Light">
 
     </style>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme2" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-
+        <item name="colorPrimary">@color/toolbarcolor</item>
+        <item name="colorPrimaryDark">@color/statusbarcolor</item>
     </style>
 
     <style name="Theme.Actionbarchange" parent="@style/Theme.AppCompat.Light">
