@@ -48,7 +48,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
 import com.vis.AlarmReceiver;
 import com.vis.Analytics;
-import com.vis.Analytics.TrackerName;
+
 import com.vis.FacebookActivity;
 import com.vis.R;
 import com.vis.beans.FbProfile;
@@ -388,8 +388,7 @@ public class MyActivity extends Activity {
     private void rateUs(String message) {
 
         final SharedPreferences prefs = getPreferences(this);
-        Tracker t = ((Analytics) getApplication()).getTracker(
-                TrackerName.APP_TRACKER);
+        Tracker t = ((Analytics) getApplication()).getDefaultTracker();
         t.enableAdvertisingIdCollection(true);
         // Build and send an Event.
         t.send(new HitBuilders.EventBuilder()

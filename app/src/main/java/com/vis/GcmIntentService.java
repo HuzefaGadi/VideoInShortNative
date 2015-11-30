@@ -29,7 +29,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.gson.JsonSyntaxException;
-import com.vis.Analytics.TrackerName;
+
 import com.vis.activities.MainActivity;
 import com.vis.activities.MyActivity;
 import com.vis.beans.NotificationMessage;
@@ -149,8 +149,7 @@ public class GcmIntentService extends IntentService {
 
 			mBuilder.setContentIntent(contentIntent);
 			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-			Tracker t = ((Analytics)getApplication()).getTracker(
-                    TrackerName.APP_TRACKER);
+			Tracker t = ((Analytics)getApplication()).getDefaultTracker();
 			// Build and send an Event.
 			t.send(new HitBuilders.EventBuilder()
             .setCategory("GCM")

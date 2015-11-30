@@ -142,7 +142,7 @@ public final class MainActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.MyToolbar);
         setSupportActionBar(toolbar);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
          collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
         collapsingToolbar.setTitle("Video in Short");
@@ -369,8 +369,7 @@ public final class MainActivity extends AppCompatActivity {
     private void rateUs(String message) {
 
         final SharedPreferences prefs = getPreferences(this);
-        Tracker t = ((Analytics) getApplication()).getTracker(
-                Analytics.TrackerName.APP_TRACKER);
+        Tracker t = ((Analytics) getApplication()).getDefaultTracker();
         t.enableAdvertisingIdCollection(true);
         // Build and send an Event.
         t.send(new HitBuilders.EventBuilder()

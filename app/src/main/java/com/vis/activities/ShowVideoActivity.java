@@ -23,6 +23,7 @@ public class ShowVideoActivity extends Activity implements YouTubePlayer.OnFulls
                 (VideoFragment) getFragmentManager().findFragmentById(R.id.video_fragment_container);
         videoFragment.setVideoId(videoId);
 
+
     }
 
     @Override

@@ -74,8 +74,7 @@ public class WebServiceUtility {
             SharedPreferences pref = getPreferences(mContext);
 
             if (action == Constants.SEND_FACEBOOK_DATA) {
-                Tracker t = ((Analytics) mContext.getApplicationContext()).getTracker(
-                        Analytics.TrackerName.APP_TRACKER);
+                Tracker t = ((Analytics) mContext.getApplicationContext()).getDefaultTracker();
                 // Build and send an Event.
                 t.send(new HitBuilders.EventBuilder()
                         .setCategory("USERDATA")
@@ -94,8 +93,7 @@ public class WebServiceUtility {
 
                 insertFacebookNewUserData((FbProfile) params[0]);
             } else if (action == Constants.SEND_APP_ACTIVE_DATA) {
-                Tracker t = ((Analytics) mContext.getApplicationContext()).getTracker(
-                        Analytics.TrackerName.APP_TRACKER);
+                Tracker t = ((Analytics) mContext.getApplicationContext()).getDefaultTracker();
                 // Build and send an Event.
                 t.send(new HitBuilders.EventBuilder()
                         .setCategory("App Active")
@@ -141,8 +139,7 @@ public class WebServiceUtility {
             } else if (action == Constants.USER_INFO_TASK) {
 
 
-                Tracker t = ((Analytics) mContext).getTracker(
-                        Analytics.TrackerName.APP_TRACKER);
+                Tracker t = ((Analytics) mContext).getDefaultTracker();
                 // Build and send an Event.
                 t.send(new HitBuilders.EventBuilder()
                         .setCategory("GCM")
@@ -904,8 +901,7 @@ public class WebServiceUtility {
     private void showUpdateMessage(String message) {
 
         final SharedPreferences prefs = getPreferences(mContext);
-        Tracker t = ((Analytics) mContext).getTracker(
-                Analytics.TrackerName.APP_TRACKER);
+        Tracker t = ((Analytics) mContext).getDefaultTracker();
         t.enableAdvertisingIdCollection(true);
         // Build and send an Event.
         t.send(new HitBuilders.EventBuilder()

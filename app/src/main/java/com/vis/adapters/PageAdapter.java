@@ -22,8 +22,11 @@ import android.widget.Toast;
 
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.ShareVideo;
 import com.facebook.share.model.ShareVideoContent;
 import com.facebook.share.widget.ShareDialog;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
@@ -35,6 +38,7 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.vis.Analytics;
 import com.vis.R;
 import com.vis.activities.MainActivity;
 import com.vis.activities.ShowVideoActivity;
@@ -71,6 +75,7 @@ public class PageAdapter extends BaseAdapter {
     DisplayImageOptions options;
     ImageLoader imageLoader;
     int width,height;
+    Tracker mTracker;
 
 
     public PageAdapter(Context context, List<VideoEntry> entries , FbProfile fbProfile) {
@@ -80,7 +85,7 @@ public class PageAdapter extends BaseAdapter {
         this.fbProfile = fbProfile;
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         width = displayMetrics.widthPixels;
-        height = displayMetrics.heightPixels;
+        height = (width * 75 )/100;
         animateFirstListener = new AnimateFirstDisplayListener();
         imageLoader =ImageLoader.getInstance();
         initImageLoader(context,imageLoader);
@@ -93,6 +98,8 @@ public class PageAdapter extends BaseAdapter {
                 .considerExifParams(true)
 
                 .build();
+        mTracker= ((Analytics) ((MainActivity)mContext).getApplication()).getDefaultTracker();
+
 
     }
 
@@ -120,7 +127,7 @@ public class PageAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
         VideoEntry entry = entries.get(position);
-        ImageView thumbnail;
+        ImageView thumbnail,videoPreviewPlayButton;
         // There are three cases here
         if (view == null) {
             // 1) The view has not yet been created - we need to initialize the YouTubeThumbnailView.
@@ -131,18 +138,23 @@ public class PageAdapter extends BaseAdapter {
              thumbnail = (ImageView) view.findViewById(R.id.imagethumbnail);
 
         }
-        int heightScaled = width * 75 / 100;
-        thumbnail.getLayoutParams().height = heightScaled;
 
+        videoPreviewPlayButton = (ImageView)view.findViewById(R.id.videoPreviewPlayButton);
+
+        thumbnail.getLayoutParams().height = height;
         thumbnail.getLayoutParams().width = width;
         thumbnail.requestLayout();
 
+        videoPreviewPlayButton.getLayoutParams().height = height;
+        videoPreviewPlayButton.getLayoutParams().width = width;
+        videoPreviewPlayButton.requestLayout();
+
         TextView label = ((TextView) view.findViewById(R.id.text));
         ImageButton fbShare = (ImageButton)view.findViewById(R.id.share_facebook);
-        ImageButton twitterShare = (ImageButton)view.findViewById(R.id.share_twitter);
+        //ImageButton twitterShare = (ImageButton)view.findViewById(R.id.share_twitter);
         ImageButton watsappShare = (ImageButton)view.findViewById(R.id.share_watsapp);
         fbShare.setTag(entry.getVideoId());
-        twitterShare.setTag(entry.getVideoId());
+      //  twitterShare.setTag(entry.getVideoId());
         watsappShare.setTag(entry.getVideoId());
         thumbnail.setTag(entry.getVideoId());
 
@@ -160,12 +172,12 @@ public class PageAdapter extends BaseAdapter {
             }
         });
 
-        twitterShare.setOnClickListener(new View.OnClickListener() {
+        /*twitterShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 shareOnTwitter((String)v.getTag());
             }
-        });
+        });*/
 
         watsappShare.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,6 +204,16 @@ public class PageAdapter extends BaseAdapter {
     }
     private void shareOnWatsapp(String videoId)
     {
+
+
+        mTracker.enableAdvertisingIdCollection(true);
+        // Build and send an Event.
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Share")
+                .setAction("Shared")
+                .setLabel("Watsapp Share")
+
+                .build());
         try {
             String youtubeTag = "http://www.youtube.com/watch?v="+videoId;
             Intent sendIntent = new Intent();
@@ -211,6 +233,16 @@ public class PageAdapter extends BaseAdapter {
     }
 
     public void shareOnFacebook(String videoAddress) {
+
+
+        mTracker.enableAdvertisingIdCollection(true);
+        // Build and send an Event.
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Share")
+                .setAction("Shared")
+                .setLabel("facebook Share")
+
+                .build());
        ShareDialog shareDialog = new ShareDialog((MainActivity)mContext);
         String youtubeTag = "http://www.youtube.com/watch?v="+videoAddress;
         String id = videoAddress;
@@ -222,19 +254,29 @@ public class PageAdapter extends BaseAdapter {
             videoViewBean.setType(Constants.FACEBOOK);
             new WebServiceUtility(mContext,Constants.SHARE_DATA,videoViewBean);
 
-           /* ShareVideoContent videoContent = new ShareVideoContent.Builder()
-                    .setContentUrl(Uri.parse(youtubetag))
-
-                    .setContentTitle("test")
+            ShareVideoContent videoContent = new ShareVideoContent.Builder()
+                    .setContentUrl(Uri.parse(youtubeTag))
+                    .setContentTitle("Video in Short")
                     .setPreviewPhoto(new SharePhoto.Builder().setImageUrl(Uri.parse("http://img.youtube.com/vi/" + id + "/0.jpg")).build())
-                    .build();*/
+                    .build();
+           /* String imageUrl = "http://img.youtube.com/vi/" + videoAddress + "/0.jpg";
             ShareLinkContent linkContent = new ShareLinkContent.Builder()
                     .setContentTitle("Video in Short")
                     .setImageUrl(Uri.parse("http://img.youtube.com/vi/" + id + "/0.jpg"))
                     .setContentUrl(Uri.parse(youtubeTag))
+                    .build();*/
+
+
+
+            Uri videoFileUri = Uri.parse(youtubeTag);
+            ShareVideo video = new ShareVideo.Builder()
+                    .setLocalUrl(videoFileUri)
+                    .build();
+            ShareVideoContent content = new ShareVideoContent.Builder()
+                    .setVideo(video)
                     .build();
 
-            shareDialog.show(linkContent);
+            shareDialog.show(content);
 
         }
 
@@ -270,6 +312,8 @@ public class PageAdapter extends BaseAdapter {
         imageLoader.init(config);
     }
 
+
+
     private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
 
         static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
@@ -279,11 +323,17 @@ public class PageAdapter extends BaseAdapter {
             if (loadedImage != null) {
                 ImageView imageView = (ImageView) view;
                 boolean firstDisplay = !displayedImages.contains(imageUri);
+
                 if (firstDisplay) {
                     FadeInBitmapDisplayer.animate(imageView, 500);
                     displayedImages.add(imageUri);
                 }
             }
+        }
+
+        @Override
+        public void onLoadingStarted(String imageUri, View view) {
+            super.onLoadingStarted(imageUri, view);
         }
     }
 }

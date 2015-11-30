@@ -9,27 +9,19 @@ import com.google.android.gms.analytics.Tracker;
 
 public class Analytics extends Application {
 
-	// change the following line 
-	private static final String PROPERTY_ID = "UA-62785054-1";
 
-	public static int GENERAL_TRACKER = 0;
+	private Tracker mTracker;
 
-	public enum TrackerName {
-		APP_TRACKER, GLOBAL_TRACKER, ECOMMERCE_TRACKER,
-	}
-
-	public HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
-
-	public Analytics() {
-		super();
-	}
-
-	public synchronized Tracker getTracker(TrackerName appTracker) {
-		if (!mTrackers.containsKey(appTracker)) {
+	/**
+	 * Gets the default {@link Tracker} for this {@link Application}.
+	 * @return tracker
+	 */
+	synchronized public Tracker getDefaultTracker() {
+		if (mTracker == null) {
 			GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-			Tracker t = (appTracker == TrackerName.APP_TRACKER) ? analytics.newTracker(PROPERTY_ID) : (appTracker == TrackerName.GLOBAL_TRACKER) ? analytics.newTracker(R.xml.global_tracker) : analytics.newTracker(R.xml.ecommerce_tracker);
-			mTrackers.put(appTracker, t);
+			// To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
+			mTracker = analytics.newTracker(R.xml.global_tracker);
 		}
-		return mTrackers.get(appTracker);
+		return mTracker;
 	}
 }
