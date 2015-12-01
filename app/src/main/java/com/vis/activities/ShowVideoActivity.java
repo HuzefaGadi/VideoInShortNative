@@ -12,31 +12,35 @@ import com.vis.R;
 import com.vis.fragments.VideoFragment;
 import com.vis.utilities.DeveloperKey;
 
-public class ShowVideoActivity extends YouTubeBaseActivity implements
-        YouTubePlayer.OnInitializedListener,
-        YouTubePlayer.OnFullscreenListener{
+public class ShowVideoActivity extends Activity implements YouTubePlayer.OnFullscreenListener{
 
-    VideoFragment videoFragment;
-    YouTubePlayerView playerView;
+   VideoFragment videoFragment;
     String videoId;
-    YouTubePlayer player;
+   /*  YouTubePlayerView playerView;
+
+    YouTubePlayer player;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_video);
         videoId = getIntent().getStringExtra("VIDEO_ID");
-        playerView = (YouTubePlayerView) findViewById(R.id.player);
-        playerView.initialize(DeveloperKey.DEVELOPER_KEY, this);
+       /* playerView = (YouTubePlayerView) findViewById(R.id.player);
+        playerView.initialize(DeveloperKey.DEVELOPER_KEY, this);*/
 
 
-        /* videoFragment =
+         videoFragment =
                 (VideoFragment) getFragmentManager().findFragmentById(R.id.video_fragment_container);
-        videoFragment.setVideoId(videoId);*/
+        videoFragment.setVideoId(videoId);
 
 
     }
 
+    @Override
+    public void onFullscreen(boolean b) {
+
+    }
+/*
     @Override
     public void onFullscreen(boolean b) {
 
@@ -77,5 +81,5 @@ public class ShowVideoActivity extends YouTubeBaseActivity implements
             player.pause();
         }
         super.onPause();
-    }
+    }*/
 }

@@ -3,17 +3,13 @@ package com.vis.adapters;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -23,15 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.model.SharePhoto;
-import com.facebook.share.model.ShareVideo;
-import com.facebook.share.model.ShareVideoContent;
 import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubeThumbnailLoader;
-import com.google.android.youtube.player.YouTubeThumbnailView;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -47,19 +37,13 @@ import com.vis.activities.ShowVideoActivity;
 import com.vis.beans.FbProfile;
 import com.vis.beans.VideoEntry;
 import com.vis.beans.VideoViewBean;
-import com.vis.fragments.VideoFragment;
 import com.vis.utilities.Constants;
-import com.vis.utilities.DeveloperKey;
-import com.vis.utilities.JavaScriptInterface;
 import com.vis.utilities.WebServiceUtility;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Adapter for the video list. Manages a set of YouTubeThumbnailViews, including initializing each
@@ -76,25 +60,30 @@ public class PageAdapter extends BaseAdapter {
     private ImageLoadingListener animateFirstListener;
     DisplayImageOptions options;
     ImageLoader imageLoader;
-    int width,height;
+    int width, height;
     Tracker mTracker;
     String appPackageName;
 
-    public PageAdapter(Context context, List<VideoEntry> entries , FbProfile fbProfile) {
+    public PageAdapter(Context context, List<VideoEntry> entries, FbProfile fbProfile) {
         this.entries = entries;
         inflater = LayoutInflater.from(context);
         mContext = context;
         this.fbProfile = fbProfile;
 
-        
+
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         width = displayMetrics.widthPixels;
-        height = (width * 75 )/100;
+        height = displayMetrics.heightPixels;
 
+        if(width<height)
+        {
+            width=height;
+        }
+        height = (width * 75) / 100;
 
         animateFirstListener = new AnimateFirstDisplayListener();
-        imageLoader =ImageLoader.getInstance();
-        initImageLoader(context,imageLoader);
+        imageLoader = ImageLoader.getInstance();
+        initImageLoader(context, imageLoader);
         appPackageName = mContext.getPackageName();
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.loading_spinner)
@@ -105,7 +94,7 @@ public class PageAdapter extends BaseAdapter {
                 .considerExifParams(true)
 
                 .build();
-        mTracker= ((Analytics) ((MainActivity)mContext).getApplication()).getDefaultTracker();
+        mTracker = ((Analytics) ((MainActivity) mContext).getApplication()).getDefaultTracker();
 
 
     }
@@ -113,6 +102,11 @@ public class PageAdapter extends BaseAdapter {
     public void releaseLoaders() {
     }
 
+    @Override
+    public boolean isEnabled(int position) {
+        //Set a Toast or Log over here to check.
+        return true;
+    }
 
 
     @Override
@@ -134,7 +128,7 @@ public class PageAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
         VideoEntry entry = entries.get(position);
-        ImageView thumbnail,videoPreviewPlayButton;
+        ImageView thumbnail, videoPreviewPlayButton;
         // There are three cases here
         if (view == null) {
             // 1) The view has not yet been created - we need to initialize the YouTubeThumbnailView.
@@ -142,11 +136,11 @@ public class PageAdapter extends BaseAdapter {
             thumbnail = (ImageView) view.findViewById(R.id.imagethumbnail);
 
         } else {
-             thumbnail = (ImageView) view.findViewById(R.id.imagethumbnail);
+            thumbnail = (ImageView) view.findViewById(R.id.imagethumbnail);
 
         }
 
-        videoPreviewPlayButton = (ImageView)view.findViewById(R.id.videoPreviewPlayButton);
+        videoPreviewPlayButton = (ImageView) view.findViewById(R.id.videoPreviewPlayButton);
 
         thumbnail.getLayoutParams().height = height;
         thumbnail.getLayoutParams().width = width;
@@ -157,13 +151,13 @@ public class PageAdapter extends BaseAdapter {
         videoPreviewPlayButton.requestLayout();
 
         TextView label = ((TextView) view.findViewById(R.id.text));
-        ImageButton fbShare = (ImageButton)view.findViewById(R.id.share_facebook);
+        final ImageView fbShare = (ImageView) view.findViewById(R.id.share_facebook);
         //ImageButton twitterShare = (ImageButton)view.findViewById(R.id.share_twitter);
-        ImageButton watsappShare = (ImageButton)view.findViewById(R.id.share_watsapp);
+        ImageView watsappShare = (ImageView) view.findViewById(R.id.share_watsapp);
         fbShare.setTag(entry.getVideoId());
-      //  twitterShare.setTag(entry.getVideoId());
+        //  twitterShare.setTag(entry.getVideoId());
 
-        watsappShare.setTag(entry.getVideoId()+"|"+entry.getPostTitle());
+        watsappShare.setTag(entry.getVideoId() + ";" + entry.getPostTitle());
 
         thumbnail.setTag(entry.getVideoId());
 
@@ -173,14 +167,36 @@ public class PageAdapter extends BaseAdapter {
                 showFullScreenVideo((String) v.getTag());
             }
         });
-
+/*
         fbShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareOnFacebook((String) v.getTag());
+
+            }
+        });*/
+
+       fbShare.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        ImageView view = (ImageView) v;
+                        view.setColorFilter(Color.argb(255, 255, 255, 255)); // White Tint
+                        shareOnFacebook((String) view.getTag());
+                        v.invalidate();
+                        return true; // if you want to handle the touch event
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL: {
+                        ImageView view2 = (ImageView) v;
+                        //clear the overlay
+                        view2.getDrawable().clearColorFilter();
+                        view2.invalidate();
+                        return true;
+                    }
+                }
+                return false;
             }
         });
-
         /*twitterShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,17 +204,34 @@ public class PageAdapter extends BaseAdapter {
             }
         });*/
 
-        watsappShare.setOnClickListener(new View.OnClickListener() {
+        watsappShare.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                try {
-                    String tags[] = ((String)v.getTag()).split("|");
-                    shareOnWatsapp(tags[0],tags[1]);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        ImageView view = (ImageView) v;
+                        view.setColorFilter(Color.argb(255, 255, 255, 255)); // White Tint
+                        try {
+                            String tags[] = ((String) view.getTag()).split(";");
+                            shareOnWatsapp(tags[0], tags[1]);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        v.invalidate();
+                        return true; // if you want to handle the touch event
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL: {
+                        ImageView view2 = (ImageView) v;
+                        //clear the overlay
+                        view2.getDrawable().clearColorFilter();
+                        view2.invalidate();
+                        return true;
+                    }
                 }
+                return false;
             }
         });
+
 
         String youtubeTag = "http://img.youtube.com/vi/" + entry.getVideoId() + "/0.jpg";
         imageLoader.displayImage(youtubeTag, thumbnail, options, animateFirstListener);
@@ -207,29 +240,20 @@ public class PageAdapter extends BaseAdapter {
         return view;
     }
 
-    private void shareOnTwitter(String videoId)
-    {
+    private void shareOnTwitter(String videoId) {
         VideoViewBean videoViewBean = new VideoViewBean();
         videoViewBean.setVideoId(videoId);
         videoViewBean.setUserId(fbProfile.getFbUserId());
         videoViewBean.setType(Constants.TWITTER);
-        new WebServiceUtility(mContext,Constants.SHARE_DATA,videoViewBean);
+        new WebServiceUtility(mContext, Constants.SHARE_DATA, videoViewBean);
 
     }
-    private void shareOnWatsapp(String videoId,String videoTitle)
-    {
+
+    private void shareOnWatsapp(String videoId, String videoTitle) {
 
 
-        mTracker.enableAdvertisingIdCollection(true);
-        // Build and send an Event.
-        mTracker.send(new HitBuilders.EventBuilder()
-                .setCategory("Share")
-                .setAction("Shared")
-                .setLabel("Watsapp Share")
-
-                .build());
         try {
-            String message = "To watch "+videoTitle+", install Vint app https://play.google.com/store/apps/details?id=" + appPackageName;
+            String message = "To watch " + videoTitle + ", install Vint app https://play.google.com/store/apps/details?id=" + appPackageName;
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
             sendIntent.putExtra(Intent.EXTRA_TEXT, message);
@@ -240,75 +264,76 @@ public class PageAdapter extends BaseAdapter {
             videoViewBean.setVideoId(videoId);
             videoViewBean.setUserId(fbProfile.getFbUserId());
             videoViewBean.setType(Constants.WATSAPP);
-            new WebServiceUtility(mContext,Constants.SHARE_DATA,videoViewBean);
+            new WebServiceUtility(mContext, Constants.SHARE_DATA, videoViewBean);
+            mTracker.enableAdvertisingIdCollection(true);
+            // Build and send an Event.
+            mTracker.send(new HitBuilders.EventBuilder()
+                    .setCategory("Share")
+                    .setAction("Shared")
+                    .setLabel("Watsapp Share")
+
+                    .build());
         } catch (Exception e) {
-            Toast.makeText(mContext,"Watsapp not found in your device",Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "Watsapp not found in your device", Toast.LENGTH_LONG).show();
         }
+        VideoViewBean videoViewBean = new VideoViewBean();
+        videoViewBean.setVideoId(videoId);
+        videoViewBean.setUserId(fbProfile.getFbUserId());
+        videoViewBean.setType(Constants.WATSAPP);
+        new WebServiceUtility(mContext, Constants.SHARE_DATA, videoViewBean);
+
+
+
     }
 
     public void shareOnFacebook(String videoAddress) {
 
+        System.out.println("Facebook Clicked");
         String appUrl = "https://play.google.com/store/apps/details?id=" + appPackageName;
-        mTracker.enableAdvertisingIdCollection(true);
-        // Build and send an Event.
-        mTracker.send(new HitBuilders.EventBuilder()
-                .setCategory("Share")
-                .setAction("Shared")
-                .setLabel("facebook Share")
 
-                .build());
-       ShareDialog shareDialog = new ShareDialog((MainActivity)mContext);
-        String youtubeTag = "http://www.youtube.com/watch?v="+videoAddress;
+        ShareDialog shareDialog = new ShareDialog((MainActivity) mContext);
+
 
         if (ShareDialog.canShow(ShareLinkContent.class)) {
 
-            VideoViewBean videoViewBean = new VideoViewBean();
-            videoViewBean.setVideoId(videoAddress);
-            videoViewBean.setUserId(fbProfile.getFbUserId());
-            videoViewBean.setType(Constants.FACEBOOK);
-            new WebServiceUtility(mContext,Constants.SHARE_DATA,videoViewBean);
-
-            /*ShareVideoContent videoContent = new ShareVideoContent.Builder()
-                    .setContentUrl(Uri.parse(youtubeTag))
-                    .setContentTitle("Video in Short")
-                    .setPreviewPhoto(new SharePhoto.Builder().setImageUrl(Uri.parse("http://img.youtube.com/vi/" + id + "/0.jpg")).build())
-                    .build();*/
-           String imageUrl = "http://img.youtube.com/vi/" + videoAddress + "/0.jpg";
+            String imageUrl = "http://img.youtube.com/vi/" + videoAddress + "/0.jpg";
             ShareLinkContent linkContent = new ShareLinkContent.Builder()
                     .setContentTitle("Video in Short")
                     .setImageUrl(Uri.parse(imageUrl))
                     .setContentUrl(Uri.parse(appUrl))
                     .build();
-
-
-
-            Uri videoFileUri = Uri.parse(youtubeTag);
-            ShareVideo video = new ShareVideo.Builder()
-                    .setLocalUrl(videoFileUri)
-                    .build();
-            ShareVideoContent content = new ShareVideoContent.Builder()
-                    .setVideo(video)
-                    .build();
-
             shareDialog.show(linkContent);
+            VideoViewBean videoViewBean = new VideoViewBean();
+            videoViewBean.setVideoId(videoAddress);
+            videoViewBean.setUserId(fbProfile.getFbUserId());
+            videoViewBean.setType(Constants.FACEBOOK);
+            new WebServiceUtility(mContext, Constants.SHARE_DATA, videoViewBean);
 
+
+            mTracker.enableAdvertisingIdCollection(true);
+            // Build and send an Event.
+            mTracker.send(new HitBuilders.EventBuilder()
+                    .setCategory("Share")
+                    .setAction("Shared")
+                    .setLabel("facebook Share")
+                    .build());
         }
 
     }
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
-    private void showFullScreenVideo(String videoId)
-    {
+    private void showFullScreenVideo(String videoId) {
         VideoViewBean videoViewBean = new VideoViewBean();
         videoViewBean.setVideoId(videoId);
         videoViewBean.setUserId(fbProfile.getFbUserId());
         videoViewBean.setDate(new Date().toString());
-        new WebServiceUtility(mContext, Constants.VIDEO_VIEW,videoViewBean);
+        new WebServiceUtility(mContext, Constants.VIDEO_VIEW, videoViewBean);
         Intent intent = new Intent(mContext, ShowVideoActivity.class);
-        intent.putExtra("VIDEO_ID",videoId);
-        ((MainActivity)mContext).startActivityForResult(intent, 10);
+        intent.putExtra("VIDEO_ID", videoId);
+        ((MainActivity) mContext).startActivityForResult(intent, 10);
     }
 
-    public static void initImageLoader(Context context,ImageLoader imageLoader) {
+    public static void initImageLoader(Context context, ImageLoader imageLoader) {
         // This configuration tuning is custom. You can tune every option, you may tune some of them,
         // or you can create default configuration by
         //  ImageLoaderConfiguration.createDefault(this);
@@ -325,7 +350,6 @@ public class PageAdapter extends BaseAdapter {
         // Initialize ImageLoader with configuration.
         imageLoader.init(config);
     }
-
 
 
     private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {

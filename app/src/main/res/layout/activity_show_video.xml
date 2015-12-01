@@ -4,14 +4,14 @@
     android:background="#EA5C4D"
     android:orientation="horizontal">
 
-   <!-- <fragment
+  <fragment
         android:id="@+id/video_fragment_container"
         class="com.vis.fragments.VideoFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />-->
+        android:layout_height="match_parent" />
 
-    <com.google.android.youtube.player.YouTubePlayerView
+    <!--<com.google.android.youtube.player.YouTubePlayerView
         android:id="@+id/player"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"/>-->
 </LinearLayout>

@@ -34,7 +34,6 @@
     <android.support.v4.widget.NestedScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_gravity="fill_vertical"
@@ -49,12 +48,17 @@
             android:orientation="vertical"
             android:layout_height="match_parent">-->
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:background="@color/accentcolor"
+            android:layout_height="match_parent">
             <fragment
                 android:id="@+id/list_fragment"
                 class="com.vis.fragments.VideoListFragment"
+                android:descendantFocusability="blocksDescendants"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent" />
-
+        </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
 

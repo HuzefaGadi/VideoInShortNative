@@ -53,7 +53,7 @@ public class VideoFragment extends YouTubePlayerFragment
         if (videoId != null && !videoId.equals(this.videoId)) {
             this.videoId = videoId;
             if (player != null) {
-                player.loadVideo(videoId);
+                player.cueVideo(videoId);
 
             }
         }

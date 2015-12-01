@@ -219,7 +219,7 @@ public class WebServiceUtility {
         //Property which holds input parameters
         PropertyInfo userId = new PropertyInfo();
         //Set Name
-        userId.setName("userId");
+        userId.setName("UserId");
         //Set Value
         userId.setValue(videoView.getUserId());
         //Set dataType
@@ -890,7 +890,7 @@ public class WebServiceUtility {
             //Assign it to fahren static variable
             String responseFromService = response.toString();
 
-            System.out.println("Response For Insert App Active" + responseFromService);
+            System.out.println("Response For Get App version " + responseFromService);
             return responseFromService;
         } catch (Exception e) {
             e.printStackTrace();

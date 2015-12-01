@@ -15,10 +15,7 @@
  */
 package com.vis.activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -30,33 +27,23 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.view.ViewPropertyAnimator;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import android.support.v7.widget.Toolbar;
 
+import com.facebook.FacebookSdk;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -65,9 +52,6 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubePlayer;
-import com.google.android.youtube.player.YouTubePlayer.OnFullscreenListener;
-
 import com.google.gson.Gson;
 import com.vis.AlarmReceiver;
 import com.vis.Analytics;
@@ -75,22 +59,14 @@ import com.vis.FacebookActivity;
 import com.vis.R;
 import com.vis.beans.FbProfile;
 import com.vis.beans.Registration;
-import com.vis.fragments.VideoFragment;
 import com.vis.fragments.VideoListFragment;
 import com.vis.utilities.Constants;
-import com.vis.utilities.DeveloperKey;
 import com.vis.utilities.Utility;
 import com.vis.utilities.WebServiceUtility;
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /**
  * A sample Activity showing how to manage multiple YouTubeThumbnailViews in an adapter for display
@@ -119,7 +95,6 @@ public final class MainActivity extends AppCompatActivity {
     private VideoListFragment listFragment;
 
 
-
     String SENDER_ID = "995587742942";
 
     private boolean isFullscreen;
@@ -139,10 +114,11 @@ public final class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     CollapsingToolbarLayout collapsingToolbar;
     AppBarLayout appBarLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.video_list_demo);
 
 
@@ -150,24 +126,43 @@ public final class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
-         collapsingToolbar =
+        collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
         collapsingToolbar.setTitle("Video in Short");
 
         appBarLayout = (AppBarLayout) findViewById(R.id.MyAppbar);
 
-        NestedScrollView scrollView = (NestedScrollView) findViewById (R.id.nested_scroll_view);
-        scrollView.setFillViewport (true);
+        NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nested_scroll_view);
+        scrollView.setFillViewport(true);
 
         mContext = this;
         prefs = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
         listFragment = (VideoListFragment) getFragmentManager().findFragmentById(R.id.list_fragment);
+// Check device for Play Services APK. If check succeeds, proceed with GCM registration.
 
 
         String responseFromFb = getIntent().getStringExtra(Constants.FB_USER_INFO);
         if (responseFromFb != null && !responseFromFb.isEmpty()) {
             fbProfile = new Gson().fromJson(responseFromFb, FbProfile.class);
         }
+
+        if (checkPlayServices()) {
+            gcm = GoogleCloudMessaging.getInstance(this);
+            regid = getRegistrationId(mContext);
+
+            if (regid.isEmpty()) {
+                registerInBackground();
+            }
+            else
+            {
+                doFacebookThing();
+                checkYouTubeApi();
+            }
+        } else {
+            Log.i(Constants.TAG, "No valid Google Play Services APK found.");
+        }
+
+
         if (prefs.getBoolean("ALARM_SET", false)) {
 
         } else {
@@ -180,7 +175,7 @@ public final class MainActivity extends AppCompatActivity {
             int startTime = 1000 * 60 * 60 * 24 * 5;
             /*int interval = 1000 * 60 * 1;
                 int startTime = 1000 * 60 * 1;*/
-			/* Set the alarm to start at 10:30 AM */
+            /* Set the alarm to start at 10:30 AM */
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis() + startTime);
 			/* Repeating on every 20 minutes interval */
@@ -201,13 +196,12 @@ public final class MainActivity extends AppCompatActivity {
                 }
             }
         };
-        doFacebookThing();
 
-        checkYouTubeApi();
 
 
         //  new WebServiceUtility(this,Constants.GET_VIDEOS,null);
     }
+
 
     private void doFacebookThing() {
 
@@ -237,12 +231,8 @@ public final class MainActivity extends AppCompatActivity {
                 registration.setAppVersion(getAppVersionName(getApplicationContext()));
                 new WebServiceUtility(getApplicationContext(), Constants.USER_INFO_TASK, registration);
             }
-
-
             new WebServiceUtility(getApplicationContext(), Constants.SEND_APP_ACTIVE_DATA, regId);
             new WebServiceUtility(getApplicationContext(), Constants.UPDATE_APP, getAppVersionName(getApplicationContext()));
-
-
         }
     }
 
@@ -263,9 +253,7 @@ public final class MainActivity extends AppCompatActivity {
         if (requestCode == RECOVERY_DIALOG_REQUEST) {
             // Recreate the activity if user performed a recovery action
             recreate();
-        }
-        else
-        {
+        } else {
 
             listFragment.getListView().clearChoices();
             listFragment.getListView().requestLayout();
@@ -290,7 +278,9 @@ public final class MainActivity extends AppCompatActivity {
     void processIntent(Intent intent) {
         String notification = intent.getStringExtra("NOTIFICATION");
         if (notification != null && !notification.isEmpty()) {
+            String regId = getRegistrationId(mContext);
             new WebServiceUtility(this, Constants.CLICK_INFO_TASK, notification);
+            new WebServiceUtility(getApplicationContext(), Constants.SEND_APP_ACTIVE_DATA, regId);
         }
         onRefresh();
 
@@ -298,6 +288,10 @@ public final class MainActivity extends AppCompatActivity {
 
     public void onRefresh() {
         // TODO Auto-generated method stub
+
+        if (listFragment != null) {
+            listFragment.refresh();
+        }
 		/*
 		new Handler().postDelayed(new Runnable() {
 			@Override public void run() {
@@ -356,6 +350,7 @@ public final class MainActivity extends AppCompatActivity {
         // TODO Auto-generated method stub
         super.onStart();
 
+        System.out.println("TRANSITION ONSTART");
         SharedPreferences pref = getPreferences(this);
         if (pref.getBoolean(Constants.PREFERENCES_SHOW_ALARM, false) && !pref.getBoolean(Constants.PREFERENCES_ALREADY_RATED, false)) {
             rateUs("You are awesome! If you feel the same about VideoInShort, please take a moment to rate it.");
@@ -371,6 +366,7 @@ public final class MainActivity extends AppCompatActivity {
         super.onStop();
         GoogleAnalytics.getInstance(this).reportActivityStop(this);
         unregisterReceiver(broadcast_reciever);
+        System.out.println("TRANSITION ONSTOP");
     }
 
     private void rateUs(String message) {
@@ -515,12 +511,14 @@ public final class MainActivity extends AppCompatActivity {
         }
         return registrationId;
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -539,6 +537,7 @@ public final class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
     /**
      * Registers the application with GCM servers asynchronously.
      * <p/>
@@ -579,8 +578,24 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String msg) {
                 // mDisplay.append(msg + "\n");
+                doFacebookThing();
+                checkYouTubeApi();
             }
         }.execute(null, null, null);
     }
+
+
+    @Override
+    protected void onResume() {
+        System.out.println("TRANSITION RESUMED");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        System.out.println("TRANSITION PAUSED");
+        super.onPause();
+    }
+
 
 }

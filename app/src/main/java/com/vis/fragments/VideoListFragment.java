@@ -52,14 +52,13 @@ public class VideoListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       new CallWebservice().execute();
+        new CallWebservice().execute();
         pref = getActivity().getSharedPreferences(Constants.PREFERENCES_NAME,
                 Context.MODE_PRIVATE);
         String responseFromFb = pref.getString(Constants.FB_USER_INFO, null);
         if (responseFromFb != null) {
             fbProfile = new Gson().fromJson(responseFromFb, FbProfile.class);
-
-        }
+}
     }
 
     @Override
@@ -70,6 +69,11 @@ public class VideoListFragment extends ListFragment {
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
 
+    }
+
+    public void refresh()
+    {
+        new CallWebservice().execute();
     }
     public static boolean setListViewHeightBasedOnItems(ListView listView) {
 
@@ -112,8 +116,6 @@ public class VideoListFragment extends ListFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-        adapter.releaseLoaders();
     }
 
 
@@ -198,5 +200,7 @@ public class VideoListFragment extends ListFragment {
 
         return null;
     }
+
+
 
 }
