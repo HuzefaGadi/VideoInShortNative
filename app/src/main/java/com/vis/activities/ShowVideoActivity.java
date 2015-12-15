@@ -1,6 +1,24 @@
 package com.vis.activities;
 
 import android.app.Activity;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+
+import com.google.android.youtube.player.YouTubePlayer;
+import com.vis.R;
+
+/*
+
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -16,17 +34,21 @@ public class ShowVideoActivity extends Activity implements YouTubePlayer.OnFulls
 
    VideoFragment videoFragment;
     String videoId;
-   /*  YouTubePlayerView playerView;
+   */
+/*  YouTubePlayerView playerView;
 
-    YouTubePlayer player;*/
+    YouTubePlayer player;*//*
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_video);
         videoId = getIntent().getStringExtra("VIDEO_ID");
-       /* playerView = (YouTubePlayerView) findViewById(R.id.player);
-        playerView.initialize(DeveloperKey.DEVELOPER_KEY, this);*/
+       */
+/* playerView = (YouTubePlayerView) findViewById(R.id.player);
+        playerView.initialize(DeveloperKey.DEVELOPER_KEY, this);*//*
+
 
 
          videoFragment =
@@ -40,6 +62,7 @@ public class ShowVideoActivity extends Activity implements YouTubePlayer.OnFulls
     public void onFullscreen(boolean b) {
 
     }
+*/
 /*
     @Override
     public void onFullscreen(boolean b) {
@@ -81,5 +104,72 @@ public class ShowVideoActivity extends Activity implements YouTubePlayer.OnFulls
             player.pause();
         }
         super.onPause();
-    }*/
+    }*//*
+
+}
+*/
+public class ShowVideoActivity extends AppCompatActivity implements YouTubePlayer.OnFullscreenListener{
+    WebView displayVideo;
+    private static final String URL = "file:///android_asset/index.html";
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_show_video);
+        String  videoId = getIntent().getStringExtra("VIDEO_ID");
+        String frameVideo = "<html><body><iframe id=\'click\' width=100% height=100% src=\"https://www.youtube.com/embed/"+videoId+"?enablejsapi=1&playerapiid=ytplayer&version=3&rel=0&fs=1&showinfo=0&autohide=1&vq=hd720&hd=1\" frameborder=\"0\" allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe></body></html>";
+
+        displayVideo = (WebView)findViewById(R.id.webView);
+            displayVideo.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return false;
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+            }
+        });
+        WebSettings webSettings = displayVideo.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        int SDK_INT = android.os.Build.VERSION.SDK_INT;
+        if (SDK_INT > 16) {
+            webSettings.setMediaPlaybackRequiresUserGesture(false);
+        }
+
+        webSettings.setPluginState(WebSettings.PluginState.ON);
+
+        displayVideo.setWebChromeClient(new WebChromeClient());
+       // displayVideo.loadUrl(URL);
+
+         displayVideo.loadData(frameVideo, "text/html", "utf-8");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (displayVideo != null) {
+            displayVideo.onPause();
+            displayVideo.pauseTimers();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (displayVideo != null) {
+            displayVideo.onResume();
+            displayVideo.resumeTimers();
+
+        }
+    }
+
+    @Override
+    public void onFullscreen(boolean b) {
+
+    }
 }

@@ -112,6 +112,7 @@
             android:label="@string/title_activity_scrolling"
             android:screenOrientation="landscape"></activity>
         <activity android:name=".activities.ShowVideoActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="landscape"></activity>
     </application>
 
