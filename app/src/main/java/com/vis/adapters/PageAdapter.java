@@ -1,12 +1,14 @@
 package com.vis.adapters;
 
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
+import android.telecom.Call;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,6 +20,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.analytics.HitBuilders;
@@ -63,13 +69,14 @@ public class PageAdapter extends BaseAdapter {
     int width, height;
     Tracker mTracker;
     String appPackageName;
+    public CallbackManager callbackManager;
 
     public PageAdapter(Context context, List<VideoEntry> entries, FbProfile fbProfile) {
         this.entries = entries;
         inflater = LayoutInflater.from(context);
         mContext = context;
         this.fbProfile = fbProfile;
-
+        callbackManager = CallbackManager.Factory.create();
 
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         width = displayMetrics.widthPixels;
@@ -79,7 +86,8 @@ public class PageAdapter extends BaseAdapter {
         {
             width=height;
         }
-        height = (width * 75) / 100;
+        width = (width * 60 )/100;
+        height = (width * 70) / 100;
 
         animateFirstListener = new AnimateFirstDisplayListener();
         imageLoader = ImageLoader.getInstance();
@@ -167,6 +175,7 @@ public class PageAdapter extends BaseAdapter {
                 showFullScreenVideo((String) v.getTag());
             }
         });
+        
 /*
         fbShare.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -250,9 +259,15 @@ public class PageAdapter extends BaseAdapter {
     }
 
     private void shareOnWatsapp(String videoId, String videoTitle) {
-
+        ProgressDialog shareProgressDialog = new ProgressDialog(mContext);
 
         try {
+
+            shareProgressDialog.setCancelable(false);
+            shareProgressDialog.setMessage("Please wait..");
+            shareProgressDialog.setTitle("Sharing..");
+            shareProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            shareProgressDialog.show();
             String message = "To watch " + videoTitle + ", install Vint app https://play.google.com/store/apps/details?id=" + appPackageName;
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
@@ -265,6 +280,7 @@ public class PageAdapter extends BaseAdapter {
             videoViewBean.setUserId(fbProfile.getFbUserId());
             videoViewBean.setType(Constants.WATSAPP);
             new WebServiceUtility(mContext, Constants.SHARE_DATA, videoViewBean);
+
             mTracker.enableAdvertisingIdCollection(true);
             // Build and send an Event.
             mTracker.send(new HitBuilders.EventBuilder()
@@ -276,24 +292,30 @@ public class PageAdapter extends BaseAdapter {
         } catch (Exception e) {
             Toast.makeText(mContext, "Watsapp not found in your device", Toast.LENGTH_LONG).show();
         }
-        VideoViewBean videoViewBean = new VideoViewBean();
+
+        if(shareProgressDialog!=null)
+        {
+            shareProgressDialog.dismiss();
+        }
+        /*VideoViewBean videoViewBean = new VideoViewBean();
         videoViewBean.setVideoId(videoId);
         videoViewBean.setUserId(fbProfile.getFbUserId());
         videoViewBean.setType(Constants.WATSAPP);
-        new WebServiceUtility(mContext, Constants.SHARE_DATA, videoViewBean);
+        new WebServiceUtility(mContext, Constants.SHARE_DATA, videoViewBean);*/
 
 
 
     }
 
     public void shareOnFacebook(String videoAddress) {
-
-        System.out.println("Facebook Clicked");
+        final ProgressDialog shareProgressDialog = new ProgressDialog(mContext);
+        shareProgressDialog.setCancelable(false);
+        shareProgressDialog.setMessage("Please wait..");
+        shareProgressDialog.setTitle("Sharing..");
+        shareProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        shareProgressDialog.show();
         String appUrl = "https://play.google.com/store/apps/details?id=" + appPackageName;
-
         ShareDialog shareDialog = new ShareDialog((MainActivity) mContext);
-
-
         if (ShareDialog.canShow(ShareLinkContent.class)) {
 
             String imageUrl = "http://img.youtube.com/vi/" + videoAddress + "/0.jpg";
@@ -302,7 +324,24 @@ public class PageAdapter extends BaseAdapter {
                     .setImageUrl(Uri.parse(imageUrl))
                     .setContentUrl(Uri.parse(appUrl))
                     .build();
+            shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+                @Override
+                public void onSuccess(Sharer.Result result) {
+                    shareProgressDialog.dismiss();
+                }
+
+                @Override
+                public void onCancel() {
+                    shareProgressDialog.dismiss();
+                }
+
+                @Override
+                public void onError(FacebookException error) {
+                    shareProgressDialog.dismiss();
+                }
+            });
             shareDialog.show(linkContent);
+
             VideoViewBean videoViewBean = new VideoViewBean();
             videoViewBean.setVideoId(videoAddress);
             videoViewBean.setUserId(fbProfile.getFbUserId());
@@ -320,6 +359,8 @@ public class PageAdapter extends BaseAdapter {
         }
 
     }
+
+
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     private void showFullScreenVideo(String videoId) {

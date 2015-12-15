@@ -19,6 +19,7 @@ import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -39,7 +40,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -57,15 +62,23 @@ import com.vis.AlarmReceiver;
 import com.vis.Analytics;
 import com.vis.FacebookActivity;
 import com.vis.R;
+import com.vis.adapters.PageAdapter;
 import com.vis.beans.FbProfile;
 import com.vis.beans.Registration;
-import com.vis.fragments.VideoListFragment;
+import com.vis.beans.VideoEntry;
 import com.vis.utilities.Constants;
 import com.vis.utilities.Utility;
 import com.vis.utilities.WebServiceUtility;
 
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -92,7 +105,7 @@ public final class MainActivity extends AppCompatActivity {
      */
     private static final int RECOVERY_DIALOG_REQUEST = 1;
 
-    private VideoListFragment listFragment;
+    private ListView listView;
 
 
     String SENDER_ID = "995587742942";
@@ -101,7 +114,7 @@ public final class MainActivity extends AppCompatActivity {
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
     private PendingIntent pendingIntent;
-    RelativeLayout noInternetMessage;
+    RelativeLayout noInternetMessage,listViewContainer;
     Context mContext;
 
 
@@ -114,7 +127,7 @@ public final class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     CollapsingToolbarLayout collapsingToolbar;
     AppBarLayout appBarLayout;
-
+    PageAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,6 +136,9 @@ public final class MainActivity extends AppCompatActivity {
 
 
         toolbar = (Toolbar) findViewById(R.id.MyToolbar);
+        noInternetMessage = (RelativeLayout)findViewById(R.id.no_internet_message);
+        listViewContainer = (RelativeLayout)findViewById(R.id.list_view_container);
+        refreshButton = (Button)findViewById(R.id.refreshButton);
         setSupportActionBar(toolbar);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
@@ -137,7 +153,7 @@ public final class MainActivity extends AppCompatActivity {
 
         mContext = this;
         prefs = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
-        listFragment = (VideoListFragment) getFragmentManager().findFragmentById(R.id.list_fragment);
+        listView = (ListView) findViewById(R.id.list_fragment);
 // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
 
 
@@ -196,8 +212,23 @@ public final class MainActivity extends AppCompatActivity {
                 }
             }
         };
+        utility = new Utility();
 
-
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onRefresh();
+            }
+        });
+        if (utility.checkInternetConnectivity(mContext)) {
+            listViewContainer.setVisibility(View.VISIBLE);
+            noInternetMessage.setVisibility(View.GONE);
+            loadListView();
+           // mainWebView.loadUrl(Constants.url);
+        } else {
+            listViewContainer.setVisibility(View.GONE);
+            noInternetMessage.setVisibility(View.VISIBLE);
+        }
 
         //  new WebServiceUtility(this,Constants.GET_VIDEOS,null);
     }
@@ -250,13 +281,16 @@ public final class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+
         if (requestCode == RECOVERY_DIALOG_REQUEST) {
             // Recreate the activity if user performed a recovery action
             recreate();
         } else {
-
-            listFragment.getListView().clearChoices();
-            listFragment.getListView().requestLayout();
+            super.onActivityResult(requestCode, resultCode, data);
+            adapter.callbackManager.onActivityResult(requestCode, resultCode, data);
+            listView.clearChoices();
+            listView.requestLayout();
 
         }
     }
@@ -288,26 +322,22 @@ public final class MainActivity extends AppCompatActivity {
 
     public void onRefresh() {
         // TODO Auto-generated method stub
-
-        if (listFragment != null) {
-            listFragment.refresh();
-        }
 		/*
 		new Handler().postDelayed(new Runnable() {
 			@Override public void run() {
 				swipeLayout.setRefreshing(false);
 			}
 		}, 5000);*/
-    /*if (utility.checkInternetConnectivity(mContext)) {
-      mContainer.setVisibility(View.VISIBLE);
-      noInternetMessage.setVisibility(View.GONE);
-      mainWebView.loadUrl(Constants.url);
+        if (utility.checkInternetConnectivity(mContext)) {
+            listViewContainer.setVisibility(View.VISIBLE);
+            noInternetMessage.setVisibility(View.GONE);
+            loadListView();
 
-    } else {
+        } else {
 
-      mContainer.setVisibility(View.GONE);
-      noInternetMessage.setVisibility(View.VISIBLE);
-    }*/
+            listViewContainer.setVisibility(View.GONE);
+            noInternetMessage.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -595,6 +625,131 @@ public final class MainActivity extends AppCompatActivity {
     protected void onPause() {
         System.out.println("TRANSITION PAUSED");
         super.onPause();
+    }
+
+    private void loadListView()
+    {
+        new CallWebservice().execute();
+    }
+
+    public class CallWebservice extends AsyncTask<Void,Void,List<VideoEntry>>
+    {
+        ProgressDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = new ProgressDialog(mContext);
+            dialog.setCancelable(false);
+            dialog.setMessage("Please wait..");
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.show();
+        }
+
+        @Override
+        protected List<VideoEntry>  doInBackground(Void... params) {
+            return getVideosList();
+        }
+
+        @Override
+        protected void onPostExecute(List<VideoEntry> videoEntries) {
+            super.onPostExecute(videoEntries);
+           // VIDEO_LIST = videoEntries;
+            adapter = new PageAdapter(mContext, videoEntries , fbProfile);
+
+            listView.setAdapter(adapter);
+            listView.requestLayout();
+            setListViewHeightBasedOnItems(listView);
+            dialog.cancel();
+        }
+    }
+
+
+
+    public List<VideoEntry> getVideosList() {
+        //Create request
+        SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.VIDEOS_METHOD_NAME);
+        //Property which holds input parameters
+
+
+        //Create envelope
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+                SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        //Set output SOAP object
+        envelope.setOutputSoapObject(request);
+
+
+        //Create HTTP call object
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(Constants.VIDEOS_URL);
+
+        try {
+            //Invole web service
+            androidHttpTransport.call(Constants.VIDEOS_SOAP_ACTION, envelope);
+            //Get the response
+            //SoapObject response = (SoapObject) envelope.getResponse();
+            //Assign it to fahren static variable
+
+            List<VideoEntry> videosList = new ArrayList<VideoEntry>();
+
+            SoapObject resultRequestSOAP = (SoapObject) envelope.bodyIn;
+            SoapObject root = (SoapObject) resultRequestSOAP.getProperty("SentListOfVideoResult");
+            int count = root.getPropertyCount();
+            for (int i = 0; i < count; i++) {
+                Object property = root.getProperty(i);
+                if (property instanceof SoapObject) {
+                    VideoEntry video = new VideoEntry();
+                    SoapObject category_list = (SoapObject) property;
+                    String postTitle = category_list.getProperty("PostTitle").toString();
+                    String videoId = category_list.getProperty("VideoId").toString();
+
+                    video.setPostTitle(postTitle);
+                    video.setVideoId(videoId);
+                    videosList.add(video);
+                }
+
+            }
+            return videosList.subList(0,20);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
+    public static boolean setListViewHeightBasedOnItems(ListView listView) {
+
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter != null) {
+
+            int numberOfItems = listAdapter.getCount();
+
+            // Get total height of all items.
+            int totalItemsHeight = 0;
+            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+                View item = listAdapter.getView(itemPos, null, listView);
+                item.measure(0, 0);
+                totalItemsHeight += item.getMeasuredHeight()+20;
+            }
+
+            // Get total height of all item dividers.
+            int totalDividersHeight = listView.getDividerHeight() *
+                    (numberOfItems - 1);
+
+            // Set list height.
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            params.height = totalItemsHeight + totalDividersHeight;
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+
+            return true;
+
+        } else {
+            return false;
+        }
+
     }
 
 

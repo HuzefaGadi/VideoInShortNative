@@ -3,6 +3,7 @@
     android:id="@+id/main_content"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:descendantFocusability="blocksDescendants"
     android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
@@ -23,22 +24,21 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/MyToolbar"
                 android:layout_width="match_parent"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="parallax" />
+                app:layout_collapseMode="parallax"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.NestedScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/nested_scroll_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_gravity="fill_vertical"
         android:fillViewport="true"
-        android:id="@+id/nested_scroll_view"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <!--<LinearLayout
@@ -50,14 +50,61 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:background="@color/accentcolor"
+            android:orientation="vertical"
             android:layout_height="match_parent">
-            <fragment
+
+        <RelativeLayout
+            android:id="@+id/list_view_container"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+
+
+            <ListView
+                android:id="@+id/list_fragment"
+                android:descendantFocusability="blocksDescendants"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+            </ListView>
+
+
+            <!--<fragment
                 android:id="@+id/list_fragment"
                 class="com.vis.fragments.VideoListFragment"
-                android:descendantFocusability="blocksDescendants"
+
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent" />
+                android:layout_height="fill_parent" />-->
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/no_internet_message"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:background="#ffdc5d4f"
+            android:visibility="gone" >
+
+            <TextView
+                android:id="@+id/message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:text="@string/no_internet_message" />
+
+            <Button
+                android:id="@+id/refreshButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Refresh"
+                android:padding="20dp"
+                android:layout_margin="20dp"
+                android:layout_below="@+id/message"
+                android:gravity="center" />
+        </RelativeLayout>
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

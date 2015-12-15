@@ -69,14 +69,13 @@ public class VideoFragment extends YouTubePlayerFragment
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean restored) {
         this.player = player;
 
-        player.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE);
+       player.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE);
         player.setOnFullscreenListener((ShowVideoActivity) getActivity());
         if (!restored && videoId != null) {
             player.loadVideo(videoId);
 
         }
         player.setFullscreen(true);
-
         player.play();
     }
 

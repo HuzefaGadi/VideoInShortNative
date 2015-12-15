@@ -108,9 +108,9 @@ public class VideoListFragment extends ListFragment {
 
     }
 
-    @Override
+    /*@Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-    }
+    }*/
 
 
     @Override
@@ -192,7 +192,7 @@ public class VideoListFragment extends ListFragment {
                 }
 
             }
-            return videosList;
+            return videosList.subList(0,20);
 
         } catch (Exception e) {
             e.printStackTrace();
