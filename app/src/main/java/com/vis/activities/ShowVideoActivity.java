@@ -16,7 +16,7 @@ import android.webkit.WebViewClient;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.vis.R;
 
-/*
+
 
 import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
@@ -34,10 +34,12 @@ public class ShowVideoActivity extends Activity implements YouTubePlayer.OnFulls
 
    VideoFragment videoFragment;
     String videoId;
-   */
-/*  YouTubePlayerView playerView;
 
-    YouTubePlayer player;*//*
+/*
+YouTubePlayerView playerView;
+
+    YouTubePlayer player;
+*/
 
 
     @Override
@@ -45,9 +47,9 @@ public class ShowVideoActivity extends Activity implements YouTubePlayer.OnFulls
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_video);
         videoId = getIntent().getStringExtra("VIDEO_ID");
-       */
-/* playerView = (YouTubePlayerView) findViewById(R.id.player);
-        playerView.initialize(DeveloperKey.DEVELOPER_KEY, this);*//*
+
+/*playerView = (YouTubePlayerView) findViewById(R.id.player);
+        playerView.initialize(DeveloperKey.DEVELOPER_KEY, this);*/
 
 
 
@@ -62,15 +64,7 @@ public class ShowVideoActivity extends Activity implements YouTubePlayer.OnFulls
     public void onFullscreen(boolean b) {
 
     }
-*/
 /*
-    @Override
-    public void onFullscreen(boolean b) {
-
-    }
-
-
-
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
         this.player = player;
@@ -104,10 +98,11 @@ public class ShowVideoActivity extends Activity implements YouTubePlayer.OnFulls
             player.pause();
         }
         super.onPause();
-    }*//*
+    }*/
 
 }
-*/
+
+/*
 public class ShowVideoActivity extends AppCompatActivity implements YouTubePlayer.OnFullscreenListener{
     WebView displayVideo;
     private static final String URL = "file:///android_asset/index.html";
@@ -173,3 +168,4 @@ public class ShowVideoActivity extends AppCompatActivity implements YouTubePlaye
 
     }
 }
+*/

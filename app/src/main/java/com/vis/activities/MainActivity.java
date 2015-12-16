@@ -114,7 +114,7 @@ public final class MainActivity extends AppCompatActivity {
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
     private PendingIntent pendingIntent;
-    RelativeLayout noInternetMessage,listViewContainer;
+    RelativeLayout noInternetMessage, listViewContainer;
     Context mContext;
 
 
@@ -128,23 +128,22 @@ public final class MainActivity extends AppCompatActivity {
     CollapsingToolbarLayout collapsingToolbar;
     AppBarLayout appBarLayout;
     PageAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.video_list_demo);
-
-
         toolbar = (Toolbar) findViewById(R.id.MyToolbar);
-        noInternetMessage = (RelativeLayout)findViewById(R.id.no_internet_message);
-        listViewContainer = (RelativeLayout)findViewById(R.id.list_view_container);
-        refreshButton = (Button)findViewById(R.id.refreshButton);
+        noInternetMessage = (RelativeLayout) findViewById(R.id.no_internet_message);
+        listViewContainer = (RelativeLayout) findViewById(R.id.list_view_container);
+        refreshButton = (Button) findViewById(R.id.refreshButton);
         setSupportActionBar(toolbar);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
         collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
-        collapsingToolbar.setTitle("Video in Short");
+        collapsingToolbar.setTitle("Vint");
 
         appBarLayout = (AppBarLayout) findViewById(R.id.MyAppbar);
 
@@ -168,9 +167,7 @@ public final class MainActivity extends AppCompatActivity {
 
             if (regid.isEmpty()) {
                 registerInBackground();
-            }
-            else
-            {
+            } else {
                 doFacebookThing();
                 checkYouTubeApi();
             }
@@ -194,7 +191,7 @@ public final class MainActivity extends AppCompatActivity {
             /* Set the alarm to start at 10:30 AM */
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis() + startTime);
-			/* Repeating on every 20 minutes interval */
+            /* Repeating on every 20 minutes interval */
             manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                     interval, pendingIntent);
             prefs.edit().putBoolean("ALARM_SET", true).commit();
@@ -224,7 +221,7 @@ public final class MainActivity extends AppCompatActivity {
             listViewContainer.setVisibility(View.VISIBLE);
             noInternetMessage.setVisibility(View.GONE);
             loadListView();
-           // mainWebView.loadUrl(Constants.url);
+            // mainWebView.loadUrl(Constants.url);
         } else {
             listViewContainer.setVisibility(View.GONE);
             noInternetMessage.setVisibility(View.VISIBLE);
@@ -627,13 +624,11 @@ public final class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    private void loadListView()
-    {
+    private void loadListView() {
         new CallWebservice().execute();
     }
 
-    public class CallWebservice extends AsyncTask<Void,Void,List<VideoEntry>>
-    {
+    public class CallWebservice extends AsyncTask<Void, Void, List<VideoEntry>> {
         ProgressDialog dialog;
 
         @Override
@@ -647,15 +642,15 @@ public final class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected List<VideoEntry>  doInBackground(Void... params) {
+        protected List<VideoEntry> doInBackground(Void... params) {
             return getVideosList();
         }
 
         @Override
         protected void onPostExecute(List<VideoEntry> videoEntries) {
             super.onPostExecute(videoEntries);
-           // VIDEO_LIST = videoEntries;
-            adapter = new PageAdapter(mContext, videoEntries , fbProfile);
+            // VIDEO_LIST = videoEntries;
+            adapter = new PageAdapter(mContext, videoEntries, fbProfile);
 
             listView.setAdapter(adapter);
             listView.requestLayout();
@@ -663,7 +658,6 @@ public final class MainActivity extends AppCompatActivity {
             dialog.cancel();
         }
     }
-
 
 
     public List<VideoEntry> getVideosList() {
@@ -709,7 +703,7 @@ public final class MainActivity extends AppCompatActivity {
                 }
 
             }
-            return videosList.subList(0,20);
+            return videosList.subList(0, 20);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -731,7 +725,7 @@ public final class MainActivity extends AppCompatActivity {
             for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
                 View item = listAdapter.getView(itemPos, null, listView);
                 item.measure(0, 0);
-                totalItemsHeight += item.getMeasuredHeight()+20;
+                totalItemsHeight += item.getMeasuredHeight() + 20;
             }
 
             // Get total height of all item dividers.

@@ -21,6 +21,12 @@ import android.widget.Toast;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
+
+/*@ReportsCrashes(mailTo = "reports@yourdomain.com",
+		customReportContent = { ReportField.APP_VERSION_CODE, ReportField.APP_VERSION_NAME, ReportField.ANDROID_VERSION, ReportField.PHONE_MODEL, ReportField.CUSTOM_DATA, ReportField.STACK_TRACE, ReportField.LOGCAT },
+		mode = ReportingInteractionMode.TOAST,
+		resToastText = R.string.crash_toast_text)*/
+
 public class Analytics extends Application {
 
 
@@ -43,7 +49,7 @@ public class Analytics extends Application {
 	public void onCreate ()
 	{
 		// Setup handler for uncaught exceptions.
-		Thread.setDefaultUncaughtExceptionHandler (new Thread.UncaughtExceptionHandler()
+		/*Thread.setDefaultUncaughtExceptionHandler (new Thread.UncaughtExceptionHandler()
 		{
 			@Override
 			public void uncaughtException (Thread thread, Throwable e)
@@ -51,14 +57,16 @@ public class Analytics extends Application {
 				handleUncaughtException (thread, e);
 			}
 		});
-
+*/
 		super.onCreate();
+		//ACRA.init(this);
+
 	}
 
 	public void handleUncaughtException (Thread thread, Throwable e)
 	{
 
-		writeIntoFile(e.getMessage());
+		writeIntoFile	(e.getMessage());
 	}
 
 

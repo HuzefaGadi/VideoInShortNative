@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,20 +10,43 @@
     tools:context=".MainActivityFragment">
 
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="30dp"
-        android:gravity="center_vertical">
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/login_button"
+        android:layout_marginBottom="100dp"
+        android:id="@+id/imageView"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:src="@drawable/vint_mainpage"
+
+        android:layout_centerHorizontal="true" />
+
+
 
         <com.facebook.login.widget.LoginButton
             android:id="@+id/login_button"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/terms"
+            android:layout_marginBottom="100dp"
             android:textSize="15dp"
             android:paddingTop="15dp"
             android:paddingBottom="15dp"/>
-    </RelativeLayout>
 
 
-</LinearLayout>
+    <TextView
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:textSize="12dip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:id="@+id/terms"
+        android:text="@string/terms"/>
+
+
+
+
+</RelativeLayout>
