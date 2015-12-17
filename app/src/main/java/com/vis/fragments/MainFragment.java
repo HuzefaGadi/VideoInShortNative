@@ -57,6 +57,7 @@ public class MainFragment extends Fragment {
     ProgressDialog pd;
     ShareDialog shareDialog;
 
+
     private FacebookCallback<LoginResult> callback = new FacebookCallback<LoginResult>() {
 
         @Override

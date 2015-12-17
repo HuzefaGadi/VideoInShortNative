@@ -29,9 +29,13 @@ import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -63,7 +67,7 @@ public class PageAdapter extends BaseAdapter {
     private static Context mContext;
 
     FbProfile fbProfile;
-    private ImageLoadingListener animateFirstListener;
+    private ImageLoadingListener imageLoadingListener;
     DisplayImageOptions options;
     ImageLoader imageLoader;
     int width, height;
@@ -89,7 +93,7 @@ public class PageAdapter extends BaseAdapter {
         width = (width * 60 )/100;
         height = (width * 70) / 100;
 
-        animateFirstListener = new AnimateFirstDisplayListener();
+        imageLoadingListener = new ImageLoadingListener();
         imageLoader = ImageLoader.getInstance();
         initImageLoader(context, imageLoader);
         appPackageName = mContext.getPackageName();
@@ -100,7 +104,9 @@ public class PageAdapter extends BaseAdapter {
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)
-
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .resetViewBeforeLoading(true)
+                .imageScaleType(ImageScaleType.EXACTLY)
                 .build();
         mTracker = ((Analytics) ((MainActivity) mContext).getApplication()).getDefaultTracker();
 
@@ -243,7 +249,8 @@ public class PageAdapter extends BaseAdapter {
 
 
         String youtubeTag = "http://img.youtube.com/vi/" + entry.getVideoId() + "/0.jpg";
-        imageLoader.displayImage(youtubeTag, thumbnail, options, animateFirstListener);
+        ImageSize targetSize = new ImageSize(width,height);
+        imageLoader.displayImage(youtubeTag, thumbnail, options, imageLoadingListener);
         label.setText(entry.getPostTitle());
         label.setVisibility(View.VISIBLE);
         return view;
@@ -383,7 +390,7 @@ public class PageAdapter extends BaseAdapter {
                 .threadPriority(Thread.NORM_PRIORITY - 2)
                 .denyCacheImageMultipleSizesInMemory()
                 .diskCacheFileNameGenerator(new Md5FileNameGenerator())
-                .diskCacheSize(50 * 1024 * 1024) // 50 Mb
+                .diskCacheSize(20 * 1024 * 1024) // 20 Mb
                 .tasksProcessingOrder(QueueProcessingType.LIFO)
                 .writeDebugLogs() // Remove for release app
 
@@ -393,7 +400,7 @@ public class PageAdapter extends BaseAdapter {
     }
 
 
-    private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
+    private static class ImageLoadingListener extends SimpleImageLoadingListener {
 
         static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
 
