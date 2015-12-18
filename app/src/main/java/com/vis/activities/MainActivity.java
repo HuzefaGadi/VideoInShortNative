@@ -35,7 +35,9 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -140,21 +142,32 @@ public final class MainActivity extends AppCompatActivity {
         noInternetMessage = (RelativeLayout) findViewById(R.id.no_internet_message);
         listViewContainer = (RelativeLayout) findViewById(R.id.list_view_container);
         refreshButton = (Button) findViewById(R.id.refreshButton);
-        setSupportActionBar(toolbar);
+
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
-        collapsingToolbar =
+        /*collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
-        collapsingToolbar.setTitle("Vint");
+        collapsingToolbar.setTitle("Vint");*/
 
         appBarLayout = (AppBarLayout) findViewById(R.id.MyAppbar);
 
-        NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nested_scroll_view);
-        scrollView.setFillViewport(true);
+
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+
+       /* NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nested_scroll_view);
+        scrollView.setFillViewport(true);*/
 
         mContext = this;
         prefs = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
         listView = (ListView) findViewById(R.id.list_fragment);
+        listView.setDivider(null);
+        listView.setDividerHeight(10);
+       // listView.setOnScrollListener(onScrollListener);
+
 // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
 
 
@@ -233,7 +246,30 @@ public final class MainActivity extends AppCompatActivity {
         //  new WebServiceUtility(this,Constants.GET_VIDEOS,null);
     }
 
+   /* public ListView.OnScrollListener onScrollListener = new ListView.OnScrollListener() {
+        boolean hideToolBar = false;
+        @Override
 
+        public void onScrollStateChanged(AbsListView absListView, int i) {
+            if (hideToolBar) {
+                getSupportActionBar().hide();
+            } else {
+                getSupportActionBar().show();
+            }
+        }
+
+        @Override
+        public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+
+            if (i2 > 10) {
+                hideToolBar = true;
+
+            } else if (i2 < -5) {
+                hideToolBar = false;
+            }
+        }
+
+    };*/
     private void doFacebookThing() {
 
         {

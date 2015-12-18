@@ -537,7 +537,7 @@ public class PageAdapter extends BaseAdapter {
         if (width < height) {
             width = height;
         }
-        width = (width * 60) / 100;
+        width = (width * 55) / 100;
         height = (width * 70) / 100;
 
         imageLoadingListener = new ImageLoadingListener();
