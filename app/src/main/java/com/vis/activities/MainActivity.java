@@ -145,21 +145,21 @@ public final class MainActivity extends AppCompatActivity {
 
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
-        /*collapsingToolbar =
+        collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
-        collapsingToolbar.setTitle("Vint");*/
+        collapsingToolbar.setTitle("Vint");
 
         appBarLayout = (AppBarLayout) findViewById(R.id.MyAppbar);
 
 
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
 
-       /* NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nested_scroll_view);
-        scrollView.setFillViewport(true);*/
+
+        NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nested_scroll_view);
+        scrollView.setFillViewport(true);
 
         mContext = this;
         prefs = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);

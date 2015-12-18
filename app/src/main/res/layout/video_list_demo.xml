@@ -1,34 +1,81 @@
-<?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_content"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:descendantFocusability="blocksDescendants"
     android:fitsSystemWindows="true">
 
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/MyAppbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#eeeeee"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        >
+        android:layout_height="100dp"
+        android:fitsSystemWindows="true">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapse_toolbar"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/toolbarcolor"
+
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/MyToolbar"
+                android:layout_width="match_parent"
+                android:layout_height=".01dip"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/nested_scroll_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="fill_vertical"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <!--<LinearLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:paddingTop="24dp"
+            android:orientation="vertical"
+            android:layout_height="match_parent">-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:background="#eeeeee"
+            android:layout_height="match_parent">
 
         <RelativeLayout
             android:id="@+id/list_view_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_height="match_parent">
 
 
             <ListView
                 android:id="@+id/list_fragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:descendantFocusability="blocksDescendants"
-                ></ListView>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
 
+            </ListView>
+
+
+            <!--<fragment
+                android:id="@+id/list_fragment"
+                class="com.vis.fragments.VideoListFragment"
+
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" />-->
         </RelativeLayout>
 
         <RelativeLayout
@@ -37,7 +84,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentTop="true"
             android:background="#ffdc5d4f"
-            android:visibility="gone">
+            android:visibility="gone" >
 
             <TextView
                 android:id="@+id/message"
@@ -52,126 +99,46 @@
                 android:id="@+id/refreshButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/message"
-                android:layout_margin="20dp"
-                android:gravity="center"
+                android:text="Refresh"
                 android:padding="20dp"
-                android:text="Refresh" />
+                android:layout_margin="20dp"
+                android:layout_below="@+id/message"
+                android:gravity="center" />
         </RelativeLayout>
-    </LinearLayout>
+        </LinearLayout>
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/MyAppbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/MyToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark"
-            android:title="Vint"
-            app:layout_scrollFlags="scroll|enterAlways" />
-    </android.support.design.widget.AppBarLayout>
+    </android.support.v4.widget.NestedScrollView>
 
 </android.support.design.widget.CoordinatorLayout>
 
+    <!--
+    <merge xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <!--<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/main_content"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:descendantFocusability="blocksDescendants"
-        android:fitsSystemWindows="true">
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/MyAppbar"
+        <fragment
+            android:id="@+id/list_fragment"
+            class="com.vis.fragments.VideoListFragment"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            app:layou
-            android:fitsSystemWindows="true">
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:id="@+id/video_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical">
 
 
-
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/MyToolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height=".01dip"
-                    app:layout_collapseMode="pin"
-
-                    app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-
-
-        </android.support.design.widget.AppBarLayout>
-
-       &lt;!&ndash; <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/nested_scroll_view"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="fill_vertical"
-            android:fillViewport="true"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">&ndash;&gt;
-
-
-            <LinearLayout
+            <fragment
+                android:id="@+id/video_fragment_container"
+                class="com.vis.fragments.VideoFragment"
                 android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:background="#eeeeee"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent" />
 
-            <RelativeLayout
-                android:id="@+id/list_view_container"
-                android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:layout_height="match_parent">
+        </LinearLayout>
 
-
-                <ListView
-                    android:id="@+id/list_fragment"
-                    android:descendantFocusability="blocksDescendants"
-                    android:layout_width="match_parent"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                    android:layout_height="match_parent">
-
-
-                </ListView>
-
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/no_internet_message"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:background="#ffdc5d4f"
-                android:visibility="gone" >
-
-                <TextView
-                    android:id="@+id/message"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:gravity="center"
-                    android:text="@string/no_internet_message" />
-
-                <Button
-                    android:id="@+id/refreshButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Refresh"
-                    android:padding="20dp"
-                    android:layout_margin="20dp"
-                    android:layout_below="@+id/message"
-                    android:gravity="center" />
-            </RelativeLayout>
-            </LinearLayout>
-
-       &lt;!&ndash; </android.support.v4.widget.NestedScrollView>&ndash;&gt;
-
-    </android.support.design.widget.CoordinatorLayout>-->
+    </merge>
+    -->
