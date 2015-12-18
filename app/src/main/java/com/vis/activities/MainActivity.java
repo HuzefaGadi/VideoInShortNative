@@ -129,8 +129,7 @@ public final class MainActivity extends AppCompatActivity {
     CollapsingToolbarLayout collapsingToolbar;
     AppBarLayout appBarLayout;
     PageAdapter adapter;
-    static int countToshowList = 0;
-    boolean flag_loading = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,36 +156,9 @@ public final class MainActivity extends AppCompatActivity {
         prefs = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
         listView = (ListView) findViewById(R.id.list_fragment);
 // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
-        Button btnLoadMore = new Button(this);
-        btnLoadMore.setText("Load More");
-        btnLoadMore.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-                // Starting a new async task
-                loadListView();
-            }
-        });
-        listView.addFooterView(btnLoadMore);
-
-       /* listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
 
 
-            }
 
-            public void onScroll(AbsListView view, int firstVisibleItem,
-                                 int visibleItemCount, int totalItemCount) {
-
-                if (firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount != 0) {
-                    if (flag_loading == false) {
-                        flag_loading = true;
-                        loadListView();
-                    }
-                }
-            }
-        });*/
         String responseFromFb = getIntent().getStringExtra(Constants.FB_USER_INFO);
         if (responseFromFb != null && !responseFromFb.isEmpty()) {
             fbProfile = new Gson().fromJson(responseFromFb, FbProfile.class);
@@ -682,15 +654,10 @@ public final class MainActivity extends AppCompatActivity {
             super.onPostExecute(videoEntries);
             // VIDEO_LIST = videoEntries;
             adapter = new PageAdapter(mContext, videoEntries, fbProfile);
-
-
-            //listView.smoothScrollToPosition(0);
-            listView.requestFocusFromTouch();
-            listView.setSelection(0);
             listView.setAdapter(adapter);
             listView.requestLayout();
             setListViewHeightBasedOnItems(listView);
-            flag_loading = false;
+
             dialog.cancel();
         }
     }
@@ -741,8 +708,8 @@ public final class MainActivity extends AppCompatActivity {
             }
 
 
-            List list = videosList.subList(countToshowList,countToshowList+20);
-            countToshowList+=20;
+            List list = videosList.subList(0,30);
+
             return list;
 
 

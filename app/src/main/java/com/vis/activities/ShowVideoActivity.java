@@ -30,7 +30,7 @@ import com.vis.R;
 import com.vis.fragments.VideoFragment;
 import com.vis.utilities.DeveloperKey;
 
-public class ShowVideoActivity extends Activity implements YouTubePlayer.OnFullscreenListener{
+public class ShowVideoActivity extends AppCompatActivity implements YouTubePlayer.OnFullscreenListener{
 
    VideoFragment videoFragment;
     String videoId;

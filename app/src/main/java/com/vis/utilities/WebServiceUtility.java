@@ -371,13 +371,13 @@ public class WebServiceUtility {
         email.setType(String.class);
 
         PropertyInfo cityName = new PropertyInfo();
-        cityName.setName("CityName");
+        cityName.setName("CountryCity");
         cityName.setType(String.class);
-
 
         PropertyInfo countryName = new PropertyInfo();
         countryName.setName("CountryName");
         countryName.setType(String.class);
+
         Location location = fbProfile.getLocation();
         if (location != null) {
             if (location.getCountry() == null && location.getCity() == null) {
@@ -391,7 +391,6 @@ public class WebServiceUtility {
             cityName.setValue("");
             countryName.setValue("");
         }
-
 
         PropertyInfo profileImagePath = new PropertyInfo();
         profileImagePath.setName("ProfileImagePath");
