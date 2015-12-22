@@ -74,7 +74,7 @@ public class GcmIntentService extends IntentService {
 		Bundle extras = intent.getExtras();
 		try {
 			GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
-			utility = new Utility();
+			utility = new Utility(this);
 			// The getMessageType() intent parameter must be the intent you received
 			// in your BroadcastReceiver.
 			String messageType = gcm.getMessageType(intent);
@@ -103,7 +103,7 @@ public class GcmIntentService extends IntentService {
                     Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
                     // Post notification of received message.
                    	String notification = extras.getString("message");
-                    if(utility.checkInternetConnectivity(this))
+                    if(utility.checkInternetConnectivity())
                     {
 						new WebServiceUtility(getApplicationContext(),Constants.RECIEVE_INFO_TASK,notification);
                     }

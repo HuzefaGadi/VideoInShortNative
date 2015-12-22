@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.vis.Analytics;
 import com.vis.R;
+import com.vis.beans.AppActive;
 import com.vis.beans.Contact;
 import com.vis.beans.FbProfile;
 import com.vis.beans.Location;
@@ -110,7 +111,7 @@ public class WebServiceUtility {
                     e.printStackTrace();
                 }
 
-                insertAppActive((String) params[0]);
+                insertAppActive((AppActive) params[0]);
             } else if (action == Constants.CLICK_INFO_TASK) {
                 String json = (String) params[0];
                 Gson gson = new Gson();
@@ -462,13 +463,13 @@ public class WebServiceUtility {
         }
     }
 
-    public void insertAppActive(String regId) {
+    public void insertAppActive(AppActive appActive) {
 
         SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.ACTIVE_METHOD_NAME);
 
         PropertyInfo mobileRegistrationId = new PropertyInfo();
         mobileRegistrationId.setName("mobileRegistrationId");
-        mobileRegistrationId.setValue(regId);
+        mobileRegistrationId.setValue(appActive.getRegId());
         mobileRegistrationId.setType(String.class);
 
         PropertyInfo version = new PropertyInfo();
@@ -476,8 +477,17 @@ public class WebServiceUtility {
         version.setValue(appVersion);
         version.setType(String.class);
 
+        PropertyInfo networkConstant = new PropertyInfo();
+        networkConstant.setName("_constant");
+        networkConstant.setValue(appActive.getNetworkConstant());
+        networkConstant.setType(String.class);
+
+
+
+
         request.addProperty(mobileRegistrationId);
         request.addProperty(version);
+        request.addProperty(networkConstant);
 
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
                 SoapEnvelope.VER11);

@@ -1,33 +1,32 @@
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
 
     android:orientation="horizontal">
 
-  <fragment
-        android:id="@+id/video_fragment_container"
-        class="com.vis.fragments.VideoFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
-<!--    <com.google.android.youtube.player.YouTubePlayerView
-        android:id="@+id/player"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>-->
-</LinearLayout>
-<!--
+        <fragment
+            android:id="@+id/video_fragment_container"
+            class="com.vis.fragments.VideoFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+
+
+
+    <!--    <com.google.android.youtube.player.YouTubePlayerView
+            android:id="@+id/player"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>-->
+</RelativeLayout><!--
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/mainLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@android:color/black">
 
-    <WebView
-        android:id="@+id/webView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@android:color/black" />
+
 </RelativeLayout>
 -->
 

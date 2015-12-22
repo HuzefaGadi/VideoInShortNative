@@ -1,46 +1,24 @@
 package com.vis.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.RelativeLayout;
 
 import com.google.android.youtube.player.YouTubePlayer;
-import com.vis.R;
-
-
-
-import android.app.Activity;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-
-import com.google.android.youtube.player.YouTubeBaseActivity;
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubePlayer;
-import com.google.android.youtube.player.YouTubePlayerView;
 import com.vis.R;
 import com.vis.fragments.VideoFragment;
-import com.vis.utilities.DeveloperKey;
+import com.vis.utilities.Constants;
+import com.vis.utilities.Utility;
 
-public class ShowVideoActivity extends AppCompatActivity implements YouTubePlayer.OnFullscreenListener{
+public class ShowVideoActivity extends AppCompatActivity implements YouTubePlayer.OnFullscreenListener {
 
-   VideoFragment videoFragment;
+    VideoFragment videoFragment;
     String videoId;
-
-/*
-YouTubePlayerView playerView;
-
-    YouTubePlayer player;
-*/
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,19 +29,15 @@ YouTubePlayerView playerView;
 /*playerView = (YouTubePlayerView) findViewById(R.id.player);
         playerView.initialize(DeveloperKey.DEVELOPER_KEY, this);*/
 
-
-
-         videoFragment =
-                (VideoFragment) getFragmentManager().findFragmentById(R.id.video_fragment_container);
+        videoFragment =(VideoFragment) getFragmentManager().findFragmentById(R.id.video_fragment_container);
         videoFragment.setVideoId(videoId);
-
-
-    }
-
+      }
     @Override
     public void onFullscreen(boolean b) {
 
     }
+
+
 /*
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {

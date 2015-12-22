@@ -35,16 +35,13 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -66,6 +63,7 @@ import com.vis.Analytics;
 import com.vis.FacebookActivity;
 import com.vis.R;
 import com.vis.adapters.PageAdapter;
+import com.vis.beans.AppActive;
 import com.vis.beans.FbProfile;
 import com.vis.beans.Registration;
 import com.vis.beans.VideoEntry;
@@ -138,6 +136,8 @@ public final class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.video_list_demo);
+
+        utility = new Utility(this);
         toolbar = (Toolbar) findViewById(R.id.MyToolbar);
         noInternetMessage = (RelativeLayout) findViewById(R.id.no_internet_message);
         listViewContainer = (RelativeLayout) findViewById(R.id.list_view_container);
@@ -148,30 +148,15 @@ public final class MainActivity extends AppCompatActivity {
         collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
         collapsingToolbar.setTitle("Vint");
-
         appBarLayout = (AppBarLayout) findViewById(R.id.MyAppbar);
-
-
-
         setSupportActionBar(toolbar);
-
-
-
-
         NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nested_scroll_view);
         scrollView.setFillViewport(true);
-
         mContext = this;
         prefs = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
         listView = (ListView) findViewById(R.id.list_fragment);
         listView.setDivider(null);
         listView.setDividerHeight(10);
-       // listView.setOnScrollListener(onScrollListener);
-
-// Check device for Play Services APK. If check succeeds, proceed with GCM registration.
-
-
-
         String responseFromFb = getIntent().getStringExtra(Constants.FB_USER_INFO);
         if (responseFromFb != null && !responseFromFb.isEmpty()) {
             fbProfile = new Gson().fromJson(responseFromFb, FbProfile.class);
@@ -184,7 +169,7 @@ public final class MainActivity extends AppCompatActivity {
             if (regid.isEmpty()) {
                 registerInBackground();
             } else {
-                doFacebookThing();
+                callAllRequiredWebservices();
                 checkYouTubeApi();
             }
         } else {
@@ -225,15 +210,13 @@ public final class MainActivity extends AppCompatActivity {
                 }
             }
         };
-        utility = new Utility();
-
-        refreshButton.setOnClickListener(new View.OnClickListener() {
+       refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onRefresh();
             }
         });
-        if (utility.checkInternetConnectivity(mContext)) {
+        if (utility.checkInternetConnectivity()) {
             listViewContainer.setVisibility(View.VISIBLE);
             noInternetMessage.setVisibility(View.GONE);
             loadListView();
@@ -246,31 +229,7 @@ public final class MainActivity extends AppCompatActivity {
         //  new WebServiceUtility(this,Constants.GET_VIDEOS,null);
     }
 
-   /* public ListView.OnScrollListener onScrollListener = new ListView.OnScrollListener() {
-        boolean hideToolBar = false;
-        @Override
-
-        public void onScrollStateChanged(AbsListView absListView, int i) {
-            if (hideToolBar) {
-                getSupportActionBar().hide();
-            } else {
-                getSupportActionBar().show();
-            }
-        }
-
-        @Override
-        public void onScroll(AbsListView absListView, int i, int i1, int i2) {
-
-            if (i2 > 10) {
-                hideToolBar = true;
-
-            } else if (i2 < -5) {
-                hideToolBar = false;
-            }
-        }
-
-    };*/
-    private void doFacebookThing() {
+    private void callAllRequiredWebservices() {
 
         {
             SharedPreferences pref = getPreferences(mContext);
@@ -298,7 +257,11 @@ public final class MainActivity extends AppCompatActivity {
                 registration.setAppVersion(getAppVersionName(getApplicationContext()));
                 new WebServiceUtility(getApplicationContext(), Constants.USER_INFO_TASK, registration);
             }
-            new WebServiceUtility(getApplicationContext(), Constants.SEND_APP_ACTIVE_DATA, regId);
+
+            AppActive appActive = new AppActive();
+            appActive.setRegId(regId);
+            appActive.setNetworkConstant(utility.connectedNetwork());
+            new WebServiceUtility(getApplicationContext(), Constants.SEND_APP_ACTIVE_DATA, appActive);
             new WebServiceUtility(getApplicationContext(), Constants.UPDATE_APP, getAppVersionName(getApplicationContext()));
         }
     }
@@ -350,21 +313,18 @@ public final class MainActivity extends AppCompatActivity {
         if (notification != null && !notification.isEmpty()) {
             String regId = getRegistrationId(mContext);
             new WebServiceUtility(this, Constants.CLICK_INFO_TASK, notification);
-            new WebServiceUtility(getApplicationContext(), Constants.SEND_APP_ACTIVE_DATA, regId);
+            AppActive appActive = new AppActive();
+            appActive.setRegId(regId);
+            appActive.setNetworkConstant(utility.connectedNetwork());
+            new WebServiceUtility(getApplicationContext(), Constants.SEND_APP_ACTIVE_DATA, appActive);
         }
         onRefresh();
 
     }
 
     public void onRefresh() {
-        // TODO Auto-generated method stub
-		/*
-		new Handler().postDelayed(new Runnable() {
-			@Override public void run() {
-				swipeLayout.setRefreshing(false);
-			}
-		}, 5000);*/
-        if (utility.checkInternetConnectivity(mContext)) {
+
+        if (utility.checkInternetConnectivity()) {
             listViewContainer.setVisibility(View.VISIBLE);
             noInternetMessage.setVisibility(View.GONE);
             loadListView();
@@ -454,28 +414,6 @@ public final class MainActivity extends AppCompatActivity {
         dialog.setTitle("Rate Us!!");
         dialog.setMessage(message);
         dialog.setIcon(R.mipmap.ic_launcher);
-		/*AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-		t.enableAdvertisingIdCollection(true);
-		dialog.setTitle( "Rate Us!!" )
-		.setIcon(R.drawable.ic_launcher)
-		.setMessage(message)
-		.setNegativeButton("Later", new DialogInterface.OnClickListener()
-		{
-			public void onClick(DialogInterface dialoginterface, int i)
-			{
-				dialoginterface.cancel();
-				prefs.edit().putBoolean("SHOWALARM", false).commit();
-			}})
-			.setPositiveButton("Now", new DialogInterface.OnClickListener()
-			{
-				public void onClick(DialogInterface dialoginterface, int i)
-				{
-					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getApplicationContext().getPackageName())));
-					prefs.edit().putBoolean("SHOWALARM", false).commit();
-					prefs.edit().putBoolean("ALREADYRATED", true).commit();
-				}
-			}).show();*/
-
 
         dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Now", new DialogInterface.OnClickListener() {
 
@@ -644,7 +582,7 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String msg) {
                 // mDisplay.append(msg + "\n");
-                doFacebookThing();
+                callAllRequiredWebservices();
                 checkYouTubeApi();
             }
         }.execute(null, null, null);
@@ -744,7 +682,7 @@ public final class MainActivity extends AppCompatActivity {
             }
 
 
-            List list = videosList.subList(0,30);
+            List list = videosList.subList(0, 30);
 
             return list;
 

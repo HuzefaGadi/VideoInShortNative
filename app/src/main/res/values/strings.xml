@@ -15,4 +15,5 @@
     <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="crash_toast_text">App Crashed Sending Report</string>
    <string name="terms">By Signing up,you agree to our <a href="http://videoinshort.com/privacypolicy.html">Terms</a> and <a href="http://videoinshort.com/privacypolicy.html">Privacy Policy</a></string>
+    <string name="title_activity_show_video_in_iframe">ShowVideoInIFrameActivity</string>
 </resources>

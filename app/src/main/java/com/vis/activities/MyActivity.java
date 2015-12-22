@@ -122,7 +122,7 @@ public class MyActivity extends Activity {
         if (responseFromFb != null && !responseFromFb.isEmpty()) {
             fbProfile = new Gson().fromJson(responseFromFb, FbProfile.class);
         }
-        utility = new Utility();
+        utility = new Utility(this);
         //swipeLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_container);
         noInternetMessage = (RelativeLayout) findViewById(R.id.no_internet_message);
         mContainer = (FrameLayout) findViewById(R.id.webview_frame);
@@ -169,7 +169,7 @@ public class MyActivity extends Activity {
         mainWebView.setWebChromeClient(new MyCustomChromeClient());
 
 
-        if (utility.checkInternetConnectivity(mContext)) {
+        if (utility.checkInternetConnectivity()) {
             mContainer.setVisibility(View.VISIBLE);
             noInternetMessage.setVisibility(View.GONE);
             mainWebView.loadUrl(Constants.url);
@@ -260,7 +260,7 @@ public class MyActivity extends Activity {
 				swipeLayout.setRefreshing(false);
 			}
 		}, 5000);*/
-        if (utility.checkInternetConnectivity(mContext)) {
+        if (utility.checkInternetConnectivity()) {
             mContainer.setVisibility(View.VISIBLE);
             noInternetMessage.setVisibility(View.GONE);
             mainWebView.loadUrl(Constants.url);

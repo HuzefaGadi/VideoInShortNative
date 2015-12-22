@@ -9,28 +9,26 @@ import java.io.OutputStreamWriter;
 import java.util.HashMap;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.support.multidex.MultiDex;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
-import org.acra.ACRA;
-import org.acra.ReportField;
-import org.acra.ReportingInteractionMode;
-import org.acra.annotation.ReportsCrashes;
 
 
-@ReportsCrashes(mailTo = "learndroid53@gmail.com",
+/*@ReportsCrashes(mailTo = "learndroid53@gmail.com",
 		customReportContent = { ReportField.APP_VERSION_CODE, ReportField.APP_VERSION_NAME, ReportField.ANDROID_VERSION, ReportField.PHONE_MODEL, ReportField.CUSTOM_DATA, ReportField.STACK_TRACE, ReportField.LOGCAT },
 		mode = ReportingInteractionMode.TOAST,
-		resToastText = R.string.crash_toast_text)
+		resToastText = R.string.crash_toast_text)*/
 
 public class Analytics extends Application {
 
@@ -64,14 +62,14 @@ public class Analytics extends Application {
 		});
 */
 		super.onCreate();
-		ACRA.init(this);
+		//ACRA.init(this);
 
 	}
 
 	public void handleUncaughtException (Thread thread, Throwable e)
 	{
 
-		writeIntoFile	(e.getMessage());
+		writeIntoFile(e.getMessage());
 	}
 
 

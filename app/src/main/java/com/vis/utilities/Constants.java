@@ -91,6 +91,9 @@ public class Constants {
     public static final String FACEBOOK="f";
     public static final String TWITTER="t";
 
+    public static final String WIFI = "W";
+    public static final String MOBILEDATA = "M";
+
 
 
 

@@ -490,10 +490,12 @@ import com.vis.Analytics;
 import com.vis.R;
 import com.vis.activities.MainActivity;
 import com.vis.activities.ShowVideoActivity;
+import com.vis.activities.ShowVideoInIFrameActivity;
 import com.vis.beans.FbProfile;
 import com.vis.beans.VideoEntry;
 import com.vis.beans.VideoViewBean;
 import com.vis.utilities.Constants;
+import com.vis.utilities.Utility;
 import com.vis.utilities.WebServiceUtility;
 
 import java.util.Collections;
@@ -513,6 +515,7 @@ public class PageAdapter extends BaseAdapter {
     private final List<VideoEntry> entries;
     private final LayoutInflater inflater;
     private static Context mContext;
+    Utility utility;
 
     FbProfile fbProfile;
     private ImageLoadingListener imageLoadingListener;
@@ -529,7 +532,7 @@ public class PageAdapter extends BaseAdapter {
         mContext = context;
         this.fbProfile = fbProfile;
         callbackManager = CallbackManager.Factory.create();
-
+        utility = new Utility(mContext);
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         width = displayMetrics.widthPixels;
         height = displayMetrics.heightPixels;
@@ -803,7 +806,17 @@ public class PageAdapter extends BaseAdapter {
         videoViewBean.setUserId(fbProfile.getFbUserId());
         videoViewBean.setDate(new Date().toString());
         new WebServiceUtility(mContext, Constants.VIDEO_VIEW, videoViewBean);
-        Intent intent = new Intent(mContext, ShowVideoActivity.class);
+        Intent intent = null;
+        String networkConstant = utility.connectedNetwork();
+        if(networkConstant!=null && networkConstant.equals(Constants.WIFI))
+        {
+            intent  = new Intent(mContext, ShowVideoActivity.class);
+        }
+        else
+        {
+            intent= new Intent(mContext, ShowVideoInIFrameActivity.class);
+        }
+
         intent.putExtra("VIDEO_ID", videoId);
         ((MainActivity) mContext).startActivityForResult(intent, 10);
     }
