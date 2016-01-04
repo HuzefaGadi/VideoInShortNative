@@ -30,9 +30,9 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.share.widget.ShareDialog;
 import com.google.gson.Gson;
-import com.vis.activities.MainActivity;
 
 import com.vis.R;
+import com.vis.activities.MainActivity;
 import com.vis.beans.FbProfile;
 import com.vis.utilities.Constants;
 

@@ -112,7 +112,7 @@ public class PageAdapter extends BaseAdapter {
                 .resetViewBeforeLoading(true)
                 .imageScaleType(ImageScaleType.EXACTLY)
                 .build();
-        mTracker = ((Analytics) ((MainActivity) mContext).getApplication()).getDefaultTracker();
+        mTracker = ((Analytics) ((MainActivityOld) mContext).getApplication()).getDefaultTracker();
 
 
     }
@@ -346,7 +346,7 @@ public class PageAdapter extends BaseAdapter {
         shareProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         shareProgressDialog.show();
         String appUrl = "https://play.google.com/store/apps/details?id=" + appPackageName;
-        ShareDialog shareDialog = new ShareDialog((MainActivity) mContext);
+        ShareDialog shareDialog = new ShareDialog((MainActivityOld) mContext);
         if (ShareDialog.canShow(ShareLinkContent.class)) {
 
             String imageUrl = "http://img.youtube.com/vi/" + videoAddress + "/0.jpg";
@@ -402,7 +402,7 @@ public class PageAdapter extends BaseAdapter {
         new WebServiceUtility(mContext, Constants.VIDEO_VIEW, videoViewBean);
         Intent intent = new Intent(mContext, ShowVideoActivity.class);
         intent.putExtra("VIDEO_ID", videoId);
-        ((MainActivity) mContext).startActivityForResult(intent, 10);
+        ((MainActivityOld) mContext).startActivityForResult(intent, 10);
     }
 
     public static void initImageLoader(Context context, ImageLoader imageLoader) {
@@ -488,7 +488,7 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.vis.Analytics;
 import com.vis.R;
-import com.vis.activities.MainActivity;
+import com.vis.activities.MainActivityOld;
 import com.vis.activities.ShowVideoActivity;
 import com.vis.activities.ShowVideoInIFrameActivity;
 import com.vis.beans.FbProfile;
@@ -558,7 +558,7 @@ public class PageAdapter extends BaseAdapter {
                 .resetViewBeforeLoading(true)
                 .imageScaleType(ImageScaleType.EXACTLY)
                 .build();
-        mTracker = ((Analytics) ((MainActivity) mContext).getApplication()).getDefaultTracker();
+        mTracker = ((Analytics) ((MainActivityOld) mContext).getApplication()).getDefaultTracker();
 
 
     }
@@ -753,7 +753,7 @@ public class PageAdapter extends BaseAdapter {
         shareProgressDialog.show();
         String appUrl = "http://t.videoinshort.com/trackshareddata.aspx?UserId=" + fbProfile.getFbUserId() + "&VideoId=" + videoAddress + "&Constant=f";
         //String appUrl = "https://play.google.com/store/apps/details?id=" + appPackageName;
-        ShareDialog shareDialog = new ShareDialog((MainActivity) mContext);
+        ShareDialog shareDialog = new ShareDialog((MainActivityOld) mContext);
         if (ShareDialog.canShow(ShareLinkContent.class)) {
 
             String imageUrl = "http://img.youtube.com/vi/" + videoAddress + "/0.jpg";
@@ -818,7 +818,7 @@ public class PageAdapter extends BaseAdapter {
         }
 
         intent.putExtra("VIDEO_ID", videoId);
-        ((MainActivity) mContext).startActivityForResult(intent, 10);
+        ((MainActivityOld) mContext).startActivityForResult(intent, 10);
     }
 
     public static void initImageLoader(Context context, ImageLoader imageLoader) {

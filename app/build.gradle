@@ -4,7 +4,10 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
-
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
     defaultConfig {
         applicationId "com.vis"
         minSdkVersion 15
@@ -37,5 +40,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-identity:8.3.0'
     compile 'com.google.android.gms:play-services-gcm:8.3.0'
     compile 'com.android.support:multidex:1.0.1'
+    compile 'com.android.support:recyclerview-v7:21.0.+'
 
 }

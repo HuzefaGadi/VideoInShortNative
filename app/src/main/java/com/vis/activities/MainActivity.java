@@ -29,23 +29,29 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
@@ -62,12 +68,13 @@ import com.vis.AlarmReceiver;
 import com.vis.Analytics;
 import com.vis.FacebookActivity;
 import com.vis.R;
-import com.vis.adapters.PageAdapter;
+import com.vis.adapters.PageAdapterForRecycler;
 import com.vis.beans.AppActive;
 import com.vis.beans.FbProfile;
 import com.vis.beans.Registration;
 import com.vis.beans.VideoEntry;
 import com.vis.utilities.Constants;
+import com.vis.utilities.HiddingScrollListener;
 import com.vis.utilities.Utility;
 import com.vis.utilities.WebServiceUtility;
 
@@ -90,23 +97,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  * rebuffering.
  */
 @TargetApi(13)
-public final class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
-    /**
-     * The duration of the animation sliding up the video in portrait.
-     */
-    private static final int ANIMATION_DURATION_MILLIS = 300;
-    /**
-     * The padding between the video list and the video in landscape orientation.
-     */
-    private static final int LANDSCAPE_VIDEO_PADDING_DP = 5;
 
-    /**
-     * The request code when calling startActivityForResult to recover from an API service error.
-     */
     private static final int RECOVERY_DIALOG_REQUEST = 1;
 
-    private ListView listView;
+    private RecyclerView recyclerView;
 
 
     String SENDER_ID = "995587742942";
@@ -128,8 +124,10 @@ public final class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     CollapsingToolbarLayout collapsingToolbar;
     AppBarLayout appBarLayout;
-    PageAdapter adapter;
-
+   // PageAdapter adapter;
+   PageAdapterForRecycler adapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+private  Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,18 +143,12 @@ public final class MainActivity extends AppCompatActivity {
 
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
-        collapsingToolbar =
-                (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
-        collapsingToolbar.setTitle("Vint");
-        appBarLayout = (AppBarLayout) findViewById(R.id.MyAppbar);
-        setSupportActionBar(toolbar);
-        NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nested_scroll_view);
-        scrollView.setFillViewport(true);
+        initToolbar();
+
         mContext = this;
         prefs = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
-        listView = (ListView) findViewById(R.id.list_fragment);
-        listView.setDivider(null);
-        listView.setDividerHeight(10);
+        recyclerView = (RecyclerView) findViewById(R.id.list_fragment);
+
         String responseFromFb = getIntent().getStringExtra(Constants.FB_USER_INFO);
         if (responseFromFb != null && !responseFromFb.isEmpty()) {
             fbProfile = new Gson().fromJson(responseFromFb, FbProfile.class);
@@ -210,7 +202,7 @@ public final class MainActivity extends AppCompatActivity {
                 }
             }
         };
-       refreshButton.setOnClickListener(new View.OnClickListener() {
+        refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onRefresh();
@@ -229,6 +221,16 @@ public final class MainActivity extends AppCompatActivity {
         //  new WebServiceUtility(this,Constants.GET_VIDEOS,null);
     }
 
+
+    private void initToolbar() {
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle("");
+       /* TextView title = (TextView) mToolbar.findViewById(R.id.toolbar_title);
+        Typeface custom_font = Typeface.createFromAsset(getAssets(), "Calibri.ttf");
+        title.setTypeface(custom_font);*/
+        setSupportActionBar(mToolbar);
+
+    }
     private void callAllRequiredWebservices() {
 
         {
@@ -288,8 +290,8 @@ public final class MainActivity extends AppCompatActivity {
         } else {
             super.onActivityResult(requestCode, resultCode, data);
             adapter.callbackManager.onActivityResult(requestCode, resultCode, data);
-            listView.clearChoices();
-            listView.requestLayout();
+
+            recyclerView.requestLayout();
 
         }
     }
@@ -627,15 +629,43 @@ public final class MainActivity extends AppCompatActivity {
         protected void onPostExecute(List<VideoEntry> videoEntries) {
             super.onPostExecute(videoEntries);
             // VIDEO_LIST = videoEntries;
-            adapter = new PageAdapter(mContext, videoEntries, fbProfile);
-            listView.setAdapter(adapter);
-            listView.requestLayout();
-            setListViewHeightBasedOnItems(listView);
+            /*adapter = new PageAdapter(mContext, videoEntries, fbProfile);
+            recyclerView.setAdapter(adapter);
+            recyclerView.requestLayout();*/
+          //  setListViewHeightBasedOnItems(recyclerView);
+
+
+            // use a linear layout manager
+            recyclerView.setHasFixedSize(true);
+            mLayoutManager = new LinearLayoutManager(MainActivity.this);
+            recyclerView.setLayoutManager(mLayoutManager);
+            adapter = new PageAdapterForRecycler(mContext, videoEntries, fbProfile);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setOnScrollListener(new HiddingScrollListener(){
+                @Override
+                public void onHide() {
+                    hideViews();
+                }
+                @Override
+                public void onShow() {
+                    showViews();
+                }
+            });
+            recyclerView.requestLayout();
 
             dialog.cancel();
         }
     }
+    private void hideViews() {
+        mToolbar.animate().translationY(-mToolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
 
+
+    }
+
+    private void showViews() {
+        mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+
+    }
 
     public List<VideoEntry> getVideosList() {
         //Create request

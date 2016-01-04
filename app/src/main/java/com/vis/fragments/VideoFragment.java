@@ -6,8 +6,6 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
 
-import com.google.android.youtube.player.YouTubeThumbnailView;
-import com.vis.activities.MainActivity;
 import com.vis.activities.ShowVideoActivity;
 import com.vis.utilities.DeveloperKey;
 

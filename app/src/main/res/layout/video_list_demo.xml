@@ -1,73 +1,28 @@
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main_content"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:descendantFocusability="blocksDescendants"
-    android:fitsSystemWindows="true">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/MyAppbar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:fitsSystemWindows="true">
-
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/collapse_toolbar"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@color/toolbarcolor"
-
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/MyToolbar"
-                android:layout_width="match_parent"
-                android:layout_height=".01dip"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-        </android.support.design.widget.CollapsingToolbarLayout>
-
-    </android.support.design.widget.AppBarLayout>
-
-    <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/nested_scroll_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_gravity="fill_vertical"
-        android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <!--<LinearLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:paddingTop="24dp"
-            android:orientation="vertical"
-            android:layout_height="match_parent">-->
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:background="#eeeeee"
-            android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#f3f3f3"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:id="@+id/list_view_container"
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
 
-            <ListView
+            <android.support.v7.widget.RecyclerView
                 android:id="@+id/list_fragment"
-                android:descendantFocusability="blocksDescendants"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:descendantFocusability="blocksDescendants">
 
 
-            </ListView>
+            </android.support.v7.widget.RecyclerView>
 
 
             <!--<fragment
@@ -84,7 +39,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentTop="true"
             android:background="#ffdc5d4f"
-            android:visibility="gone" >
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/message"
@@ -99,17 +54,148 @@
                 android:id="@+id/refreshButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Refresh"
-                android:padding="20dp"
-                android:layout_margin="20dp"
                 android:layout_below="@+id/message"
-                android:gravity="center" />
+                android:layout_margin="20dp"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="Refresh" />
         </RelativeLayout>
-        </LinearLayout>
+    </LinearLayout>
 
-    </android.support.v4.widget.NestedScrollView>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:gravity="left"
+        android:layout_gravity="left"
+        android:background="?attr/colorPrimary" >
 
-</android.support.design.widget.CoordinatorLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:src="@drawable/header_logo"
+            android:adjustViewBounds="true" />
+
+
+        </android.support.v7.widget.Toolbar>
+
+</FrameLayout>
+
+
+    <!--<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/main_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:descendantFocusability="blocksDescendants"
+        android:fitsSystemWindows="true">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/MyAppbar"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:fitsSystemWindows="true">
+
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapse_toolbar"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@color/toolbarcolor"
+
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/MyToolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height=".01dip"
+                    app:layout_collapseMode="pin"
+                    app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+            </android.support.design.widget.CollapsingToolbarLayout>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/nested_scroll_view"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="fill_vertical"
+            android:fillViewport="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            &lt;!&ndash;<LinearLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:paddingTop="24dp"
+                android:orientation="vertical"
+                android:layout_height="match_parent">&ndash;&gt;
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:background="#f3f3f3"
+                android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/list_view_container"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="match_parent">
+
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/list_fragment"
+                    android:descendantFocusability="blocksDescendants"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+
+                </android.support.v7.widget.RecyclerView>
+
+
+                &lt;!&ndash;<fragment
+                    android:id="@+id/list_fragment"
+                    class="com.vis.fragments.VideoListFragment"
+
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent" />&ndash;&gt;
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/no_internet_message"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:background="#ffdc5d4f"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center"
+                    android:text="@string/no_internet_message" />
+
+                <Button
+                    android:id="@+id/refreshButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Refresh"
+                    android:padding="20dp"
+                    android:layout_margin="20dp"
+                    android:layout_below="@+id/message"
+                    android:gravity="center" />
+            </RelativeLayout>
+            </LinearLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+
+    </android.support.design.widget.CoordinatorLayout>-->
 
     <!--
     <merge xmlns:android="http://schemas.android.com/apk/res/android"
