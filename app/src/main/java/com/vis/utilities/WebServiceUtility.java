@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.vis.Analytics;
 import com.vis.R;
+import com.vis.activities.MainActivity;
 import com.vis.beans.AppActive;
 import com.vis.beans.Contact;
 import com.vis.beans.FbProfile;
@@ -173,8 +174,6 @@ public class WebServiceUtility {
                         }
                     }*/
 
-            } else if (action == Constants.UPDATE_APP) {
-                return getAppVersion((String) params[0]);
             } else if (action == Constants.VIDEO_VIEW) {
                 callVideoViewed((VideoViewBean) params[0]);
             } else if (action == Constants.SHARE_DATA) {
@@ -188,15 +187,6 @@ public class WebServiceUtility {
         @Override
         protected void onPostExecute(String result) {
             Log.i(Constants.TAG, "onPostExecute");
-
-            if (action == Constants.UPDATE_APP) {
-                if (result != null) {
-                    if (result.equals("1")) {
-                        showUpdateMessage("Update your App!!");
-                    }
-                }
-            }
-
         }
 
         @Override
@@ -874,69 +864,7 @@ public class WebServiceUtility {
     }
 
 
-    public String getAppVersion(String appVer) {
 
-        SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.VERSION_METHOD_NAME);
 
-        PropertyInfo appVersion = new PropertyInfo();
-        appVersion.setName("appVersion");
-        appVersion.setValue(appVer);
-        appVersion.setType(String.class);
 
-        request.addProperty(appVersion);
-
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
-                SoapEnvelope.VER11);
-        envelope.dotNet = true;
-        envelope.setOutputSoapObject(request);
-        HttpTransportSE androidHttpTransport = new HttpTransportSE(Constants.VERSION_URL);
-
-        try {
-            //Invole web service
-            androidHttpTransport.call(Constants.VERSION_SOAP_ACTION, envelope);
-            //Get the response
-            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
-            //Assign it to fahren static variable
-            String responseFromService = response.toString();
-
-            System.out.println("Response For Get App version " + responseFromService);
-            return responseFromService;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private void showUpdateMessage(String message) {
-
-        final SharedPreferences prefs = getPreferences(mContext);
-        Tracker t = ((Analytics) mContext).getDefaultTracker();
-        t.enableAdvertisingIdCollection(true);
-        // Build and send an Event.
-        t.send(new HitBuilders.EventBuilder()
-                .setCategory("Alert View")
-                .setAction("Rate Us")
-                .setLabel("Rate Us called")
-
-                .build());
-
-        AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
-        t.enableAdvertisingIdCollection(true);
-        dialog.setTitle("Update Available!!")
-                .setIcon(R.mipmap.ic_launcher)
-                .setMessage(message)
-                .setNegativeButton("Later", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialoginterface, int i) {
-                        dialoginterface.cancel();
-
-                    }
-                })
-                .setPositiveButton("Now", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialoginterface, int i) {
-                        mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + mContext.getApplicationContext().getPackageName())));
-
-                    }
-                }).show();
-
-    }
 }

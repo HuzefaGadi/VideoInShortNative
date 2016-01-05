@@ -79,7 +79,9 @@ import com.vis.utilities.Utility;
 import com.vis.utilities.WebServiceUtility;
 
 import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
@@ -264,9 +266,11 @@ private  Toolbar mToolbar;
             appActive.setRegId(regId);
             appActive.setNetworkConstant(utility.connectedNetwork());
             new WebServiceUtility(getApplicationContext(), Constants.SEND_APP_ACTIVE_DATA, appActive);
-            new WebServiceUtility(getApplicationContext(), Constants.UPDATE_APP, getAppVersionName(getApplicationContext()));
+            checkForAppUpdateApp(getAppVersionName(getApplicationContext()));
         }
     }
+
+
 
     private void checkYouTubeApi() {
         YouTubeInitializationResult errorReason =
@@ -724,37 +728,81 @@ private  Toolbar mToolbar;
         return null;
     }
 
+    private void checkForAppUpdateApp(String appVer) {
+        new AsyncTask<String, Void, String>() {
+            @Override
+            protected String doInBackground(String... params) {
+                SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.VERSION_METHOD_NAME);
 
-    public static boolean setListViewHeightBasedOnItems(ListView listView) {
+                PropertyInfo appVersion = new PropertyInfo();
+                appVersion.setName("appVersion");
+                appVersion.setValue(params[0]);
+                appVersion.setType(String.class);
 
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter != null) {
+                request.addProperty(appVersion);
 
-            int numberOfItems = listAdapter.getCount();
+                SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+                        SoapEnvelope.VER11);
+                envelope.dotNet = true;
+                envelope.setOutputSoapObject(request);
+                HttpTransportSE androidHttpTransport = new HttpTransportSE(Constants.VERSION_URL);
 
-            // Get total height of all items.
-            int totalItemsHeight = 0;
-            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
-                View item = listAdapter.getView(itemPos, null, listView);
-                item.measure(0, 0);
-                totalItemsHeight += item.getMeasuredHeight() + 20;
+                try {
+                    //Invole web service
+                    androidHttpTransport.call(Constants.VERSION_SOAP_ACTION, envelope);
+                    //Get the response
+                    SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+                    //Assign it to fahren static variable
+                    String responseFromService = response.toString();
+
+                    System.out.println("Response For Get App version " + responseFromService);
+                    return responseFromService;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
             }
 
-            // Get total height of all item dividers.
-            int totalDividersHeight = listView.getDividerHeight() *
-                    (numberOfItems - 1);
+            @Override
+            protected void onPostExecute(String result) {
+                if (result != null) {
+                    if (result.equals("1")) {
+                        showUpdateMessage("Update your App!!");
+                    }
+                }
+            }
+        }.execute(appVer);
 
-            // Set list height.
-            ViewGroup.LayoutParams params = listView.getLayoutParams();
-            params.height = totalItemsHeight + totalDividersHeight;
-            listView.setLayoutParams(params);
-            listView.requestLayout();
-
-            return true;
-
-        } else {
-            return false;
         }
+
+
+    private void showUpdateMessage(String message) {
+
+        final SharedPreferences prefs = getPreferences(mContext);
+        Tracker t = ((Analytics) mContext.getApplicationContext()).getDefaultTracker();
+        t.enableAdvertisingIdCollection(true);
+        // Build and send an Event.
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("Alert View")
+                .setAction("Rate Us")
+                .setLabel("Rate Us called")
+                .build());
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+        t.enableAdvertisingIdCollection(true);
+        dialog.setTitle("Update Available!!")
+                .setIcon(R.mipmap.ic_launcher)
+                .setMessage(message)
+                .setNegativeButton("Later", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialoginterface, int i) {
+                        dialoginterface.cancel();
+                    }
+                })
+                .setPositiveButton("Now", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialoginterface, int i) {
+                        mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + mContext.getApplicationContext().getPackageName())));
+                    }
+                }).show();
 
     }
 
