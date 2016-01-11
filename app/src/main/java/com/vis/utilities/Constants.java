@@ -71,6 +71,10 @@ public class Constants {
     public static final String VIDEOS_SHARE_SOAP_ACTION = "http://tempuri.org/SharedData";
     public static final String VIDEOS_SHARE_METHOD_NAME = "SharedData";
 
+    public static final String ERROR_LOG_URL = "http://service.videoinshort.com/savefbuserdata.asmx";
+    public static final String ERROR_LOG_ACTION = "http://tempuri.org/LogError";
+    public static final String ERROR_LOG_METHOD_NAME = "LogError";
+
 
     public static final String NAMESPACE = "http://tempuri.org/";
     public static final String MENU_SETTINGS = "menusettings";
@@ -84,6 +88,7 @@ public class Constants {
     public static final String USER_AGENT_POSTFIX_WITHOUT_FACEBOOK = "VideoInShort";
     public static final int VIDEO_VIEW = 7;
     public static final int SHARE_DATA = 8;
+    public static final int LOG_ERROR = 9;
     public static String SEND_REG_ID = "REGID";
     public static String SEND_CONTACTS = "CONTACTS";
 

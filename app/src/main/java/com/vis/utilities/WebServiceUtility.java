@@ -20,12 +20,15 @@ import com.vis.R;
 import com.vis.activities.MainActivity;
 import com.vis.beans.AppActive;
 import com.vis.beans.Contact;
+import com.vis.beans.ErrorLog;
 import com.vis.beans.FbProfile;
 import com.vis.beans.Location;
 import com.vis.beans.NotificationMessage;
 import com.vis.beans.Registration;
 import com.vis.beans.VideoEntry;
 import com.vis.beans.VideoViewBean;
+
+import junit.runner.Version;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.PropertyInfo;
@@ -178,6 +181,8 @@ public class WebServiceUtility {
                 callVideoViewed((VideoViewBean) params[0]);
             } else if (action == Constants.SHARE_DATA) {
                 callShareVideo((VideoViewBean) params[0]);
+            } else if (action == Constants.LOG_ERROR) {
+                sendErrorLog((ErrorLog) params[0]);
             }
 
 
@@ -198,6 +203,11 @@ public class WebServiceUtility {
         @Override
         protected void onProgressUpdate(Void... values) {
             Log.i(Constants.TAG, "onProgressUpdate");
+
+            if(action == Constants.LOG_ERROR)
+            {
+                System.exit(0);
+            }
         }
 
     }
@@ -863,6 +873,68 @@ public class WebServiceUtility {
         return null;
     }
 
+
+    public void sendErrorLog(ErrorLog errorLog) {
+
+        System.out.println("SEND ERROR LOG");
+        SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.ERROR_LOG_METHOD_NAME);
+
+        PropertyInfo userId = new PropertyInfo();
+        userId.setName("UserId");
+        userId.setValue(errorLog.getUserId());
+        userId.setType(String.class);
+
+        PropertyInfo logFile = new PropertyInfo();
+        logFile.setName("LogFile");
+        logFile.setValue(errorLog.getLogFile());
+        logFile.setType(String.class);
+
+        PropertyInfo version = new PropertyInfo();
+        version.setName("Version");
+        version.setValue(errorLog.getVersion());
+        version.setType(String.class);
+
+        PropertyInfo osVersion = new PropertyInfo();
+        osVersion.setName("OsVersion");
+        osVersion.setValue(errorLog.getOsVersion());
+        osVersion.setType(String.class);
+
+        PropertyInfo deviceModel = new PropertyInfo();
+        deviceModel.setName("deviceModel");
+        deviceModel.setValue(errorLog.getDeviceModel());
+        deviceModel.setType(String.class);
+
+
+        //Add the property to request object
+        request.addProperty(userId);
+        request.addProperty(logFile);
+        request.addProperty(version);
+        request.addProperty(osVersion);
+        request.addProperty(deviceModel);
+
+        //Create envelope
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+                SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        //Set output SOAP object
+        envelope.setOutputSoapObject(request);
+
+
+        //Create HTTP call object
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(Constants.ERROR_LOG_URL);
+
+        try {
+            //Invole web service
+            androidHttpTransport.call(Constants.ERROR_LOG_ACTION, envelope);
+            //Get the response
+            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+            //Assign it to fahren static variable
+            String responseFromService = response.toString();
+            System.out.println("Response for Error Log " + responseFromService);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
 

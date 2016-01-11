@@ -143,6 +143,7 @@ private  Toolbar mToolbar;
         listViewContainer = (RelativeLayout) findViewById(R.id.list_view_container);
         refreshButton = (Button) findViewById(R.id.refreshButton);
 
+
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
         initToolbar();

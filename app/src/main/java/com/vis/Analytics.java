@@ -6,11 +6,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -22,6 +25,11 @@ import android.widget.Toast;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.gson.Gson;
+import com.vis.beans.ErrorLog;
+import com.vis.beans.FbProfile;
+import com.vis.utilities.Constants;
+import com.vis.utilities.WebServiceUtility;
 
 
 
@@ -34,6 +42,8 @@ public class Analytics extends Application {
 
 
 	private Tracker mTracker;
+	FbProfile fbProfile;
+	SharedPreferences prefs;
 
 	/**
 	 * Gets the default {@link Tracker} for this {@link Application}.
@@ -51,27 +61,78 @@ public class Analytics extends Application {
 	@Override
 	public void onCreate ()
 	{
+		super.onCreate();
+		prefs = getSharedPreferences(Constants.PREFERENCES_NAME,MODE_PRIVATE);
 		// Setup handler for uncaught exceptions.
-		/*Thread.setDefaultUncaughtExceptionHandler (new Thread.UncaughtExceptionHandler()
-		{
+		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
-			public void uncaughtException (Thread thread, Throwable e)
-			{
-				handleUncaughtException (thread, e);
+			public void uncaughtException(Thread thread, Throwable e) {
+				handleUncaughtException(thread, e);
 			}
 		});
-*/
-		super.onCreate();
+
+
 		//ACRA.init(this);
 
 	}
 
 	public void handleUncaughtException (Thread thread, Throwable e)
 	{
+		String appVersion = null;
+		String userId =null;
+		PackageInfo pInfo = null;
+		try {
+			pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+			appVersion = pInfo.versionName;
+		} catch (PackageManager.NameNotFoundException e1) {
+			e1.printStackTrace();
+		}
 
-		writeIntoFile(e.getMessage());
+
+		String fbUser = prefs.getString(Constants.FB_USER_INFO,null);
+		if(fbUser!=null)
+		{
+			fbProfile = new Gson().fromJson(fbUser,FbProfile.class);
+		}
+		System.out.print("Caught Exception " + e.getStackTrace());
+		if(fbProfile!=null)
+		{
+			userId = fbProfile.getFbUserId();
+		}
+		String androidVersion = android.os.Build.VERSION.RELEASE;
+		ErrorLog errorLog = new ErrorLog();
+		errorLog.setLogFile(convertStackTraceToString(e));
+		errorLog.setUserId(userId);
+		errorLog.setVersion(appVersion);
+		errorLog.setOsVersion(androidVersion);
+		errorLog.setDeviceModel(getDeviceName());
+		new WebServiceUtility(this,Constants.LOG_ERROR,errorLog);
+
+		//writeIntoFile(e.getMessage());
 	}
 
+	public String getDeviceName() {
+		String manufacturer = Build.MANUFACTURER;
+		String model = Build.MODEL;
+		if (model.startsWith(manufacturer)) {
+			return capitalize(model);
+		} else {
+			return capitalize(manufacturer) + " " + model;
+		}
+	}
+
+
+	private String capitalize(String s) {
+		if (s == null || s.length() == 0) {
+			return "";
+		}
+		char first = s.charAt(0);
+		if (Character.isUpperCase(first)) {
+			return s;
+		} else {
+			return Character.toUpperCase(first) + s.substring(1);
+		}
+	}
 
 
 	private void sendLogFile (String error)
@@ -110,5 +171,12 @@ public class Analytics extends Application {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static String convertStackTraceToString(Throwable exception) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		exception.printStackTrace(pw);
+		return sw.toString();
 	}
 }

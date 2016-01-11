@@ -34,6 +34,7 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.vis.Analytics;
 import com.vis.R;
@@ -88,8 +89,8 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
         if (width < height) {
             width = height;
         }
-        width = (width * 55) / 100;
-        height = (width * 70) / 100;
+        width = (width * 80) / 100;
+        height = (width * 60) / 100;
 
         imageLoadingListener = new ImageLoadingListener();
         imageLoader = ImageLoader.getInstance();
