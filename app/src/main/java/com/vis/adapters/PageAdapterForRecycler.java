@@ -122,7 +122,7 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         ImageView thumbnail, videoPreviewPlayButton, fbShare, watsappShare;
-        TextView label;
+        TextView label,hashTag1,hashTag2,hashTag3;
 
         public ViewHolder(View view) {
             super(view);
@@ -130,6 +130,9 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
             videoPreviewPlayButton = (ImageView) view.findViewById(R.id.videoPreviewPlayButton);
             label = ((TextView) view.findViewById(R.id.text));
             fbShare = (ImageView) view.findViewById(R.id.share_facebook);
+            hashTag1 = (TextView)view.findViewById(R.id.hashtag1);
+            hashTag2 = (TextView)view.findViewById(R.id.hashtag2);
+            hashTag3 = (TextView)view.findViewById(R.id.hashtag3);
 //ImageButton twitterShare = (ImageButton)view.findViewById(R.id.share_twitter);
             watsappShare = (ImageView) view.findViewById(R.id.share_watsapp);
 
@@ -248,12 +251,35 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
                 }
             });
 
+            view.hashTag1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(mContext,"hashtag 1 clicked",Toast.LENGTH_LONG).show();
+                }
+            });
+
+            view.hashTag2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(mContext,"hashtag 2 clicked",Toast.LENGTH_LONG).show();
+                }
+            });
+
+            view.hashTag3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(mContext,"hashtag 3 clicked",Toast.LENGTH_LONG).show();
+                }
+            });
 
             String youtubeTag = "http://img.youtube.com/vi/" + entry.getVideoId() + "/0.jpg";
             ImageSize targetSize = new ImageSize(width, height);
             imageLoader.displayImage(youtubeTag, view.thumbnail, options, imageLoadingListener);
             view.label.setText(entry.getPostTitle());
             view.label.setVisibility(View.VISIBLE);
+            view.hashTag1.setText(entry.getHashTag1());
+            view.hashTag2.setText(entry.getHashTag2());
+            view.hashTag3.setText(entry.getHashTag3());
         }
     }
 

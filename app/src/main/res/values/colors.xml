@@ -5,6 +5,7 @@
     <color name="toolbarcolor">#5280a2</color>
     <color name="textcolor">#5280a2</color>
     <color name="textcolorlight">#e2adadad</color>
+    <color name="hashtag_color">#278eff</color>
 
 
 </resources>

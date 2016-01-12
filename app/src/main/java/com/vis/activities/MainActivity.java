@@ -724,9 +724,16 @@ public class MainActivity extends AppCompatActivity {
                     SoapObject category_list = (SoapObject) property;
                     String postTitle = category_list.getProperty("PostTitle").toString();
                     String videoId = category_list.getProperty("VideoId").toString();
+                    String hashTag1 = category_list.getProperty("Category1").toString();
+                    String hashTag2 = category_list.getProperty("Category2").toString();
+                    String hashTag3 = category_list.getProperty("Category3").toString();
+
 
                     video.setPostTitle(postTitle);
                     video.setVideoId(videoId);
+                    video.setHashTag1(hashTag1);
+                    video.setHashTag2(hashTag2);
+                    video.setHashTag3(hashTag3);
                     videosList.add(video);
                 }
 

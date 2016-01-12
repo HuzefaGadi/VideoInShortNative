@@ -45,8 +45,8 @@
                 android:id="@+id/imageFrame"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/text"
                 android:layout_alignParentLeft="true"
+                android:layout_below="@+id/text"
                 android:layout_marginLeft="20dp"
                 android:foregroundGravity="center">
 
@@ -67,12 +67,12 @@
                     android:id="@+id/videoPreviewPlayButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="50dp"
                     android:layout_centerInParent="true"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
+                    android:padding="50dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_play" />
 
@@ -80,16 +80,47 @@
 
 
             <RelativeLayout
-                android:layout_below="@+id/text"
                 android:layout_width="wrap_content"
-                android:layout_alignTop="@+id/imageFrame"
-                android:layout_alignBottom="@+id/imageFrame"
                 android:layout_height="fill_parent"
-                android:layout_alignParentRight="true"
+                android:layout_alignBottom="@+id/imageFrame"
                 android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/imageFrame"
+                android:layout_below="@+id/text"
                 android:layout_marginLeft="20dp">
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/shareOn"
+                    android:layout_marginTop="20dp"
+                    android:layout_alignParentTop="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/hashtag1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="hashtag1"
+                        android:textColor="@color/hashtag_color" />
+
+                    <TextView
+                        android:id="@+id/hashtag2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="hashtag2"
+                        android:textColor="@color/hashtag_color" />
+
+                    <TextView
+                        android:id="@+id/hashtag3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="hashtag3"
+                        android:textColor="@color/hashtag_color" />
+                </LinearLayout>
+
                 <TextView
+                    android:id="@+id/shareOn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_above="@+id/share_facebook"
@@ -103,11 +134,11 @@
                     android:layout_width="@dimen/icon_size"
                     android:layout_height="@dimen/icon_size"
                     android:layout_above="@+id/share_watsapp"
-                    android:padding="5dp"
                     android:adjustViewBounds="true"
                     android:background="@null"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
+                    android:padding="5dp"
                     android:src="@mipmap/ic_fb_icon" />
 
                 <ImageView
@@ -115,9 +146,9 @@
                     android:layout_width="@dimen/icon_size"
                     android:layout_height="@dimen/icon_size"
                     android:layout_alignParentBottom="true"
+                    android:adjustViewBounds="true"
                     android:background="@null"
                     android:focusable="false"
-                    android:adjustViewBounds="true"
                     android:focusableInTouchMode="false"
                     android:src="@mipmap/ic_watsapp" />
 
