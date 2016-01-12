@@ -22,6 +22,7 @@ import com.vis.beans.AppActive;
 import com.vis.beans.Contact;
 import com.vis.beans.ErrorLog;
 import com.vis.beans.FbProfile;
+import com.vis.beans.Feedback;
 import com.vis.beans.Location;
 import com.vis.beans.NotificationMessage;
 import com.vis.beans.Registration;
@@ -181,11 +182,9 @@ public class WebServiceUtility {
                 callVideoViewed((VideoViewBean) params[0]);
             } else if (action == Constants.SHARE_DATA) {
                 callShareVideo((VideoViewBean) params[0]);
-            } else if (action == Constants.LOG_ERROR) {
-                sendErrorLog((ErrorLog) params[0]);
+            } else if (action == Constants.FEEDBACK) {
+                callFeedbackService((Feedback)params[0]);
             }
-
-
             return null;
         }
 
@@ -203,11 +202,6 @@ public class WebServiceUtility {
         @Override
         protected void onProgressUpdate(Void... values) {
             Log.i(Constants.TAG, "onProgressUpdate");
-
-            if(action == Constants.LOG_ERROR)
-            {
-                System.exit(0);
-            }
         }
 
     }
@@ -314,10 +308,20 @@ public class WebServiceUtility {
         //Set dataType
         date.setType(String.class);
 
+        //Property which holds input parameters
+        PropertyInfo networkType = new PropertyInfo();
+        //Set Name
+        networkType.setName("constant");
+        //Set Value
+        networkType.setValue(videoView.getNetworkType());
+        //Set dataType
+        networkType.setType(String.class);
+
         //Add the property to request object
         request.addProperty(userId);
         request.addProperty(videoId);
         request.addProperty(date);
+        request.addProperty(networkType);
 
         // System.out.println("Video Id "+videoView.getDate() +" "+videoView.getUserId()+" "+videoView.getVideoId());
         //Create envelope
@@ -509,84 +513,6 @@ public class WebServiceUtility {
         }
     }
 
-
-   /* public void sendAcknowledgementForClickStatus(NotificationMessage
-                                                          notification) {
-
-        //Create request
-        SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.ACK_METHOD_NAME);
-        //Property which holds input parameters
-        PropertyInfo userId = new PropertyInfo();
-        //Set Name
-        userId.setName("UserId");
-        //Set Value
-        userId.setValue(notification.getUid());
-        //Set dataType
-        userId.setType(String.class);
-        //Add the property to request object
-
-        //Property which holds input parameters
-        PropertyInfo notificationId = new PropertyInfo();
-        //Set Name
-        notificationId.setName("NotificationId");
-        //Set Value
-        notificationId.setValue(notification.getNotificationId());
-        //Set dataType
-        notificationId.setType(String.class);
-        //Add the property to request object
-
-
-        //Property which holds input parameters
-        PropertyInfo clickStatus = new PropertyInfo();
-        //Set Name
-        clickStatus.setName("clickStatus");
-        //Set Value
-        clickStatus.setValue("1");
-        //Set dataType
-        clickStatus.setType(String.class);
-
-        //Property which holds input parameters
-        PropertyInfo recStatus = new PropertyInfo();
-        //Set Name
-        recStatus.setName("receiveStatus");
-        //Set Value
-        recStatus.setValue("1");
-        //Set dataType
-        recStatus.setType(String.class);
-
-
-        //Add the property to request object
-        request.addProperty(userId);
-        request.addProperty(notificationId);
-        request.addProperty(recStatus);
-        request.addProperty(clickStatus);
-
-
-        //Create envelope
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
-                SoapEnvelope.VER11);
-        envelope.dotNet = true;
-        //Set output SOAP object
-        envelope.setOutputSoapObject(request);
-
-
-        //Create HTTP call object
-
-        HttpTransportSE androidHttpTransport = new HttpTransportSE(Constants.ACK_URL);
-
-        try {
-            //Invole web service
-            androidHttpTransport.call(Constants.ACK_SOAP_ACTION, envelope);
-            //Get the response
-            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
-            //Assign it to fahren static variable
-            String responseFromService = response.toString();
-            System.out.println("Response from CLICK status" + responseFromService);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }*/
 
     public void sendAcknowledgementForClickStatus(NotificationMessage
                                                           notification) {
@@ -806,7 +732,71 @@ public class WebServiceUtility {
             e.printStackTrace();
         }
     }
+    public void callFeedbackService(Feedback feedback) {
+        //Create request
+        SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.FEEDBACK_METHOD_NAME);
+        //Property which holds input parameters
+        PropertyInfo userId = new PropertyInfo();
+        //Set Name
+        userId.setName("UserId");
+        //Set Value
+        userId.setValue(feedback.getUserId());
+        //Set dataType
+        userId.setType(String.class);
+        //Add the property to request object
 
+        //Property which holds input parameters
+        PropertyInfo emlId = new PropertyInfo();
+        //Set Name
+        emlId.setName("Emailid");
+        //Set Value
+        emlId.setValue(feedback.getEmailId());
+        //Set dataType
+        emlId.setType(String.class);
+        //Add the property to request object
+
+
+        //Property which holds input parameters
+        PropertyInfo feedbackString = new PropertyInfo();
+        //Set Name
+        feedbackString.setName("Feedback");
+        //Set Value
+        feedbackString.setValue(feedback.getFeedback());
+        //Set dataType
+        feedbackString.setType(String.class);
+
+
+
+
+        //Add the property to request object
+        request.addProperty(userId);
+        request.addProperty(emlId);
+        request.addProperty(feedbackString);
+
+
+        //Create envelope
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+                SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        //Set output SOAP object
+        envelope.setOutputSoapObject(request);
+
+
+        //Create HTTP call object
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(Constants.FEEDBACK_URL);
+
+        try {
+            //Invole web service
+            androidHttpTransport.call(Constants.FEEDBACK_ACTION, envelope);
+            //Get the response
+            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+            //Assign it to fahren static variable
+            String responseFromService = response.toString();
+            System.out.println("Response for feedback " + responseFromService);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public String sendContactDetails(String userNumber) {
         //Create request
@@ -874,67 +864,7 @@ public class WebServiceUtility {
     }
 
 
-    public void sendErrorLog(ErrorLog errorLog) {
 
-        System.out.println("SEND ERROR LOG");
-        SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.ERROR_LOG_METHOD_NAME);
-
-        PropertyInfo userId = new PropertyInfo();
-        userId.setName("UserId");
-        userId.setValue(errorLog.getUserId());
-        userId.setType(String.class);
-
-        PropertyInfo logFile = new PropertyInfo();
-        logFile.setName("LogFile");
-        logFile.setValue(errorLog.getLogFile());
-        logFile.setType(String.class);
-
-        PropertyInfo version = new PropertyInfo();
-        version.setName("Version");
-        version.setValue(errorLog.getVersion());
-        version.setType(String.class);
-
-        PropertyInfo osVersion = new PropertyInfo();
-        osVersion.setName("OsVersion");
-        osVersion.setValue(errorLog.getOsVersion());
-        osVersion.setType(String.class);
-
-        PropertyInfo deviceModel = new PropertyInfo();
-        deviceModel.setName("deviceModel");
-        deviceModel.setValue(errorLog.getDeviceModel());
-        deviceModel.setType(String.class);
-
-
-        //Add the property to request object
-        request.addProperty(userId);
-        request.addProperty(logFile);
-        request.addProperty(version);
-        request.addProperty(osVersion);
-        request.addProperty(deviceModel);
-
-        //Create envelope
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
-                SoapEnvelope.VER11);
-        envelope.dotNet = true;
-        //Set output SOAP object
-        envelope.setOutputSoapObject(request);
-
-
-        //Create HTTP call object
-        HttpTransportSE androidHttpTransport = new HttpTransportSE(Constants.ERROR_LOG_URL);
-
-        try {
-            //Invole web service
-            androidHttpTransport.call(Constants.ERROR_LOG_ACTION, envelope);
-            //Get the response
-            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
-            //Assign it to fahren static variable
-            String responseFromService = response.toString();
-            System.out.println("Response for Error Log " + responseFromService);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
 

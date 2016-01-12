@@ -42,8 +42,7 @@ public class Analytics extends Application {
 
 
 	private Tracker mTracker;
-	FbProfile fbProfile;
-	SharedPreferences prefs;
+
 
 	/**
 	 * Gets the default {@link Tracker} for this {@link Application}.
@@ -62,12 +61,13 @@ public class Analytics extends Application {
 	public void onCreate ()
 	{
 		super.onCreate();
-		prefs = getSharedPreferences(Constants.PREFERENCES_NAME,MODE_PRIVATE);
+
 		// Setup handler for uncaught exceptions.
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread thread, Throwable e) {
 				handleUncaughtException(thread, e);
+
 			}
 		});
 
@@ -78,62 +78,14 @@ public class Analytics extends Application {
 
 	public void handleUncaughtException (Thread thread, Throwable e)
 	{
-		String appVersion = null;
-		String userId =null;
-		PackageInfo pInfo = null;
-		try {
-			pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-			appVersion = pInfo.versionName;
-		} catch (PackageManager.NameNotFoundException e1) {
-			e1.printStackTrace();
-		}
-
-
-		String fbUser = prefs.getString(Constants.FB_USER_INFO,null);
-		if(fbUser!=null)
-		{
-			fbProfile = new Gson().fromJson(fbUser,FbProfile.class);
-		}
-		System.out.print("Caught Exception " + e.getStackTrace());
-		if(fbProfile!=null)
-		{
-			userId = fbProfile.getFbUserId();
-		}
-		String androidVersion = android.os.Build.VERSION.RELEASE;
-		ErrorLog errorLog = new ErrorLog();
-		errorLog.setLogFile(convertStackTraceToString(e));
-		errorLog.setUserId(userId);
-		errorLog.setVersion(appVersion);
-		errorLog.setOsVersion(androidVersion);
-		errorLog.setDeviceModel(getDeviceName());
-		new WebServiceUtility(this,Constants.LOG_ERROR,errorLog);
-
-		//writeIntoFile(e.getMessage());
+		e.printStackTrace();
+		Intent intent = new Intent ();
+		intent.setAction ("com.vis.SEND_LOG"); // see step 5.
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.putExtra("ERROR",convertStackTraceToString(e));
+		startActivity(intent);
+		System.exit(1);
 	}
-
-	public String getDeviceName() {
-		String manufacturer = Build.MANUFACTURER;
-		String model = Build.MODEL;
-		if (model.startsWith(manufacturer)) {
-			return capitalize(model);
-		} else {
-			return capitalize(manufacturer) + " " + model;
-		}
-	}
-
-
-	private String capitalize(String s) {
-		if (s == null || s.length() == 0) {
-			return "";
-		}
-		char first = s.charAt(0);
-		if (Character.isUpperCase(first)) {
-			return s;
-		} else {
-			return Character.toUpperCase(first) + s.substring(1);
-		}
-	}
-
 
 	private void sendLogFile (String error)
 	{
@@ -172,11 +124,11 @@ public class Analytics extends Application {
 			e.printStackTrace();
 		}
 	}
-
 	public static String convertStackTraceToString(Throwable exception) {
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		exception.printStackTrace(pw);
 		return sw.toString();
 	}
+
 }

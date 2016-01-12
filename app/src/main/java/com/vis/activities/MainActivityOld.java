@@ -529,14 +529,14 @@ public final class MainActivityOld extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+      /*  //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, FacebookActivity.class);
             intent.putExtra(Constants.MENU_SETTINGS, true);
             startActivity(intent);
             finish();
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }

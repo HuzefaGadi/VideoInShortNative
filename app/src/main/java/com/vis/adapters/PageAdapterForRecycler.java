@@ -59,7 +59,7 @@ import java.util.List;
 
 public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private final List<VideoEntry> entries;
+    private List<VideoEntry> entries;
     private final LayoutInflater inflater;
     private static Context mContext;
     Utility utility;
@@ -75,6 +75,10 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
     private static final int TYPE_HEADER = 2;
     private static final int TYPE_ITEM = 1;
 
+    public void setListEntries(List<VideoEntry> entries)
+    {
+        this.entries = entries;
+    }
     public PageAdapterForRecycler(Context context, List<VideoEntry> entries, FbProfile fbProfile) {
         this.entries = entries;
         inflater = LayoutInflater.from(context);
@@ -174,8 +178,8 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
             view.thumbnail.getLayoutParams().width = width;
             view.thumbnail.requestLayout();
 
-            view.videoPreviewPlayButton.getLayoutParams().height = height;
-            view.videoPreviewPlayButton.getLayoutParams().width = width;
+            view.videoPreviewPlayButton.getLayoutParams().height =(int) (height*.50);
+            view.videoPreviewPlayButton.getLayoutParams().width = (int) (width * .50);
             view.videoPreviewPlayButton.requestLayout();
             view.fbShare.setTag(entry.getVideoId());
             //  twitterShare.setTag(entry.getVideoId());
@@ -427,7 +431,12 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
         shareProgressDialog.setTitle("Sharing..");
         shareProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         shareProgressDialog.show();
-        String appUrl = "http://t.videoinshort.com/trackshareddata.aspx?UserId=" + fbProfile.getFbUserId() + "&VideoId=" + videoAddress + "&Constant=f";
+        String userId= null;
+        if(fbProfile!=null)
+        {
+            userId = fbProfile.getFbUserId();
+        }
+        String appUrl = "http://t.videoinshort.com/trackshareddata.aspx?UserId=" + userId + "&VideoId=" + videoAddress + "&Constant=f";
         //String appUrl = "https://play.google.com/store/apps/details?id=" + appPackageName;
         ShareDialog shareDialog = new ShareDialog((MainActivity) mContext);
         if (ShareDialog.canShow(ShareLinkContent.class)) {
@@ -458,7 +467,7 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
 
             VideoViewBean videoViewBean = new VideoViewBean();
             videoViewBean.setVideoId(videoAddress);
-            videoViewBean.setUserId(fbProfile.getFbUserId());
+            videoViewBean.setUserId(userId);
             videoViewBean.setType(Constants.FACEBOOK);
             new WebServiceUtility(mContext, Constants.SHARE_DATA, videoViewBean);
 
@@ -477,13 +486,16 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     private void showFullScreenVideo(String videoId) {
+        String networkConstant = utility.connectedNetwork();
+
         VideoViewBean videoViewBean = new VideoViewBean();
         videoViewBean.setVideoId(videoId);
         videoViewBean.setUserId(fbProfile.getFbUserId());
         videoViewBean.setDate(new Date().toString());
+        videoViewBean.setNetworkType(networkConstant);
         new WebServiceUtility(mContext, Constants.VIDEO_VIEW, videoViewBean);
         Intent intent = null;
-        String networkConstant = utility.connectedNetwork();
+
         if (networkConstant != null && networkConstant.equals(Constants.WIFI)) {
             intent = new Intent(mContext, ShowVideoActivity.class);
         } else {

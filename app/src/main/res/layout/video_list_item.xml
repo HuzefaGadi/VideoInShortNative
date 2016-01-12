@@ -16,7 +16,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         app:cardUseCompatPadding="true"
-
+        card_view:cardBackgroundColor="#eceae3"
         card_view:cardPreventCornerOverlap="false"
         card_view:cardUseCompatPadding="true">
 
@@ -67,7 +67,7 @@
                     android:id="@+id/videoPreviewPlayButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="100dp"
+                    android:padding="50dp"
                     android:layout_centerInParent="true"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"

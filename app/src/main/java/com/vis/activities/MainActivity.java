@@ -29,8 +29,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,14 +42,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
@@ -74,7 +69,7 @@ import com.vis.beans.FbProfile;
 import com.vis.beans.Registration;
 import com.vis.beans.VideoEntry;
 import com.vis.utilities.Constants;
-import com.vis.utilities.HiddingScrollListener;
+import com.vis.utilities.GenericScrollListener;
 import com.vis.utilities.Utility;
 import com.vis.utilities.WebServiceUtility;
 
@@ -103,20 +98,14 @@ public class MainActivity extends AppCompatActivity {
 
 
     private static final int RECOVERY_DIALOG_REQUEST = 1;
-
     private RecyclerView recyclerView;
-
-
     String SENDER_ID = "995587742942";
-
     private boolean isFullscreen;
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
     private PendingIntent pendingIntent;
     RelativeLayout noInternetMessage, listViewContainer;
     Context mContext;
-
-
     String regid;
     Button refreshButton;
     Utility utility;
@@ -126,10 +115,10 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     CollapsingToolbarLayout collapsingToolbar;
     AppBarLayout appBarLayout;
-   // PageAdapter adapter;
-   PageAdapterForRecycler adapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-private  Toolbar mToolbar;
+    PageAdapterForRecycler adapter;
+    private LinearLayoutManager mLayoutManager;
+    private Toolbar mToolbar;
+    private List <VideoEntry> mainList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -221,6 +210,38 @@ private  Toolbar mToolbar;
             noInternetMessage.setVisibility(View.VISIBLE);
         }
 
+        mLayoutManager = new LinearLayoutManager(MainActivity.this);
+        recyclerView.setLayoutManager(mLayoutManager);
+        adapter = new PageAdapterForRecycler(mContext, new ArrayList<VideoEntry>(), fbProfile);
+        recyclerView.setAdapter(adapter);
+        recyclerView.addOnScrollListener(new GenericScrollListener(mLayoutManager) {
+            @Override
+            public void onHide() {
+                hideViews();
+            }
+
+            @Override
+            public void onShow() {
+                showViews();
+            }
+
+            @Override
+            public void onLoadMore(int current_page) {
+
+                int interimCount = adapter.getItemCount() + 33;
+                if (interimCount < 103) {
+
+                    if (mainList.size() >= 103) {
+                        adapter.setListEntries(mainList.subList(0, adapter.getItemCount() + 33));
+                        adapter.notifyDataSetChanged();
+                        recyclerView.requestLayout();
+                    }
+
+                }
+
+
+            }
+        });
         //  new WebServiceUtility(this,Constants.GET_VIDEOS,null);
     }
 
@@ -234,6 +255,7 @@ private  Toolbar mToolbar;
         setSupportActionBar(mToolbar);
 
     }
+
     private void callAllRequiredWebservices() {
 
         {
@@ -270,7 +292,6 @@ private  Toolbar mToolbar;
             checkForAppUpdateApp(getAppVersionName(getApplicationContext()));
         }
     }
-
 
 
     private void checkYouTubeApi() {
@@ -538,11 +559,17 @@ private  Toolbar mToolbar;
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logout) {
             Intent intent = new Intent(this, FacebookActivity.class);
             intent.putExtra(Constants.MENU_SETTINGS, true);
             startActivity(intent);
             finish();
+            return true;
+        }
+        else if (id == R.id.action_feedback) {
+            Intent intent = new Intent(this, FeedbackActivity.class);
+            intent.putExtra(Constants.MENU_SETTINGS, true);
+            startActivity(intent);
             return true;
         }
 
@@ -637,30 +664,19 @@ private  Toolbar mToolbar;
             /*adapter = new PageAdapter(mContext, videoEntries, fbProfile);
             recyclerView.setAdapter(adapter);
             recyclerView.requestLayout();*/
-          //  setListViewHeightBasedOnItems(recyclerView);
+            //  setListViewHeightBasedOnItems(recyclerView);
 
 
             // use a linear layout manager
             recyclerView.setHasFixedSize(true);
-            mLayoutManager = new LinearLayoutManager(MainActivity.this);
-            recyclerView.setLayoutManager(mLayoutManager);
-            adapter = new PageAdapterForRecycler(mContext, videoEntries, fbProfile);
-            recyclerView.setAdapter(adapter);
-            recyclerView.setOnScrollListener(new HiddingScrollListener(){
-                @Override
-                public void onHide() {
-                    hideViews();
-                }
-                @Override
-                public void onShow() {
-                    showViews();
-                }
-            });
+            PageAdapterForRecycler adapter = (PageAdapterForRecycler)recyclerView.getAdapter();
+            adapter.setListEntries(videoEntries);
+            adapter.notifyDataSetChanged();
             recyclerView.requestLayout();
-
             dialog.cancel();
         }
     }
+
     private void hideViews() {
         mToolbar.animate().translationY(-mToolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
 
@@ -715,10 +731,8 @@ private  Toolbar mToolbar;
                 }
 
             }
-
-
-            List list = videosList.subList(0, 30);
-
+            mainList = videosList;
+            List list = videosList.subList(0, 33);
             return list;
 
 
@@ -774,7 +788,7 @@ private  Toolbar mToolbar;
             }
         }.execute(appVer);
 
-        }
+    }
 
 
     private void showUpdateMessage(String message) {

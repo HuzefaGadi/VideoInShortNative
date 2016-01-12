@@ -8,6 +8,7 @@ public class VideoViewBean {
     private String userId;
     private String videoId;
     private String date;
+    private String networkType;
 
     public String getType() {
         return type;
@@ -41,5 +42,13 @@ public class VideoViewBean {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getNetworkType() {
+        return networkType;
+    }
+
+    public void setNetworkType(String networkType) {
+        this.networkType = networkType;
     }
 }
