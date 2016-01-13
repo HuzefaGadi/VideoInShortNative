@@ -1,6 +1,7 @@
 package com.vis.adapters;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +39,7 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.vis.Analytics;
 import com.vis.R;
+import com.vis.activities.HashTagActivity;
 import com.vis.activities.MainActivity;
 import com.vis.activities.ShowVideoActivity;
 import com.vis.activities.ShowVideoInIFrameActivity;
@@ -84,6 +86,7 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
         inflater = LayoutInflater.from(context);
         mContext = context;
         this.fbProfile = fbProfile;
+
         callbackManager = CallbackManager.Factory.create();
         utility = new Utility(mContext);
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
@@ -111,7 +114,15 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
                 .resetViewBeforeLoading(true)
                 .imageScaleType(ImageScaleType.EXACTLY)
                 .build();
-        mTracker = ((Analytics) ((MainActivity) mContext).getApplication()).getDefaultTracker();
+
+        if(mContext instanceof MainActivity)
+        {
+            mTracker = ((Analytics) ((MainActivity) mContext).getApplication()).getDefaultTracker();
+        }
+        else
+        {
+            mTracker = ((Analytics) ((HashTagActivity) mContext).getApplication()).getDefaultTracker();
+        }
 
 
     }
@@ -267,25 +278,37 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
                     return false;
                 }
             });*/
+            view.hashTag1.setText(entry.getHashTag1());
+            view.hashTag2.setText(entry.getHashTag2());
+            view.hashTag3.setText(entry.getHashTag3());
+            view.hashTag1.setTag(entry.getHashTag1());
+            view.hashTag2.setTag(entry.getHashTag2());
+            view.hashTag3.setTag(entry.getHashTag3());
 
             view.hashTag1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(mContext,"hashtag 1 clicked",Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(mContext, HashTagActivity.class);
+                    intent.putExtra(Constants.HASHTAG,String.valueOf(view.getTag()));
+                    mContext.startActivity(intent);
                 }
             });
 
             view.hashTag2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(mContext,"hashtag 2 clicked",Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(mContext, HashTagActivity.class);
+                    intent.putExtra(Constants.HASHTAG, String.valueOf(view.getTag()));
+                    mContext.startActivity(intent);
                 }
             });
 
             view.hashTag3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(mContext,"hashtag 3 clicked",Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(mContext, HashTagActivity.class);
+                    intent.putExtra(Constants.HASHTAG, String.valueOf(view.getTag()));
+                    mContext.startActivity(intent);
                 }
             });
 
@@ -294,9 +317,7 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
             imageLoader.displayImage(youtubeTag, view.thumbnail, options, imageLoadingListener);
             view.label.setText(entry.getPostTitle());
             view.label.setVisibility(View.VISIBLE);
-            view.hashTag1.setText(entry.getHashTag1());
-            view.hashTag2.setText(entry.getHashTag2());
-            view.hashTag3.setText(entry.getHashTag3());
+
         }
     }
 
@@ -481,7 +502,15 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
         }
         String appUrl = "http://t.videoinshort.com/trackshareddata.aspx?UserId=" + userId + "&VideoId=" + videoAddress + "&Constant=f";
         //String appUrl = "https://play.google.com/store/apps/details?id=" + appPackageName;
-        ShareDialog shareDialog = new ShareDialog((MainActivity) mContext);
+        ShareDialog shareDialog;
+        if(mContext instanceof MainActivity)
+        {
+            shareDialog = new ShareDialog((MainActivity) mContext);
+        }
+        else
+        {
+            shareDialog = new ShareDialog((HashTagActivity) mContext);
+        }
         if (ShareDialog.canShow(ShareLinkContent.class)) {
 
             String imageUrl = "http://img.youtube.com/vi/" + videoAddress + "/0.jpg";
@@ -546,7 +575,15 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
         }
 
         intent.putExtra("VIDEO_ID", videoId);
-        ((MainActivity) mContext).startActivityForResult(intent, 10);
+        if(mContext instanceof MainActivity)
+        {
+            ((MainActivity) mContext).startActivityForResult(intent, 10);
+        }
+        else
+        {
+            ((HashTagActivity) mContext).startActivityForResult(intent, 10);
+        }
+
     }
 
     public static void initImageLoader(Context context, ImageLoader imageLoader) {

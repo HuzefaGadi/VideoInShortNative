@@ -45,6 +45,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
@@ -121,7 +122,7 @@ public class HashTagActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
-        setContentView(R.layout.video_list_demo);
+        setContentView(R.layout.activity_hash_tag);
 
         utility = new Utility(this);
         toolbar = (Toolbar) findViewById(R.id.MyToolbar);
@@ -140,6 +141,9 @@ public class HashTagActivity extends AppCompatActivity {
 
         String responseFromFb = getIntent().getStringExtra(Constants.FB_USER_INFO);
         hashTag = getIntent().getStringExtra(Constants.HASHTAG);
+        Toolbar toolbarTop = (Toolbar) findViewById(R.id.toolbar);
+        TextView mTitle = (TextView) toolbarTop.findViewById(R.id.hashtag);
+        mTitle.setText(hashTag);
         if (responseFromFb != null && !responseFromFb.isEmpty()) {
             fbProfile = new Gson().fromJson(responseFromFb, FbProfile.class);
         } else {
@@ -344,7 +348,7 @@ public class HashTagActivity extends AppCompatActivity {
             rateUs("You are awesome! If you feel the same about VideoInShort, please take a moment to rate it.");
         }
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
-        registerReceiver(broadcast_reciever, new IntentFilter("finish_activity"));
+
     }
 
 
@@ -353,8 +357,7 @@ public class HashTagActivity extends AppCompatActivity {
         // TODO Auto-generated method stub
         super.onStop();
         GoogleAnalytics.getInstance(this).reportActivityStop(this);
-        unregisterReceiver(broadcast_reciever);
-        System.out.println("TRANSITION ONSTOP");
+
     }
 
     private void rateUs(String message) {
