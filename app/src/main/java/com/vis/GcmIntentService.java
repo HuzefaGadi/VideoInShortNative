@@ -31,7 +31,6 @@ import android.util.Log;
 import com.google.gson.JsonSyntaxException;
 
 import com.vis.activities.MainActivity;
-import com.vis.activities.MainActivityOld;
 import com.vis.beans.NotificationMessage;
 import com.vis.utilities.Constants;
 import com.vis.utilities.Utility;

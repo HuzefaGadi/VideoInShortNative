@@ -1,13 +1,10 @@
 package com.vis.utilities;
 
-import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -16,20 +13,14 @@ import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.vis.Analytics;
-import com.vis.R;
-import com.vis.activities.MainActivity;
 import com.vis.beans.AppActive;
 import com.vis.beans.Contact;
-import com.vis.beans.ErrorLog;
 import com.vis.beans.FbProfile;
 import com.vis.beans.Feedback;
 import com.vis.beans.Location;
 import com.vis.beans.NotificationMessage;
 import com.vis.beans.Registration;
-import com.vis.beans.VideoEntry;
 import com.vis.beans.VideoViewBean;
-
-import junit.runner.Version;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.PropertyInfo;
@@ -38,8 +29,6 @@ import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -56,6 +45,7 @@ public class WebServiceUtility {
         mContext = context;
         preferences = getPreferences(mContext);
         PackageInfo pInfo = null;
+
         try {
             pInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
             appVersion = pInfo.versionName;
@@ -69,6 +59,7 @@ public class WebServiceUtility {
     private class AsyncCallWS extends AsyncTask<Object, Void, String> {
 
         int action;
+        ProgressDialog progressDialog;
 
         public AsyncCallWS(int action) {
             this.action = action;
@@ -184,6 +175,10 @@ public class WebServiceUtility {
                 callShareVideo((VideoViewBean) params[0]);
             } else if (action == Constants.FEEDBACK) {
                 callFeedbackService((Feedback)params[0]);
+            } else if (action == Constants.FOLLOW_UNFOLLOW) {
+                HashTag hashTag = (HashTag)params[0];
+                progressDialog = hashTag.getProgressDialog();
+                callFollowUnfollowWebService(hashTag);
             }
             return null;
         }
@@ -191,6 +186,10 @@ public class WebServiceUtility {
         @Override
         protected void onPostExecute(String result) {
             Log.i(Constants.TAG, "onPostExecute");
+            if(progressDialog!=null)
+            {
+                progressDialog.cancel();
+            }
         }
 
         @Override
@@ -798,6 +797,71 @@ public class WebServiceUtility {
         }
     }
 
+    public void callFollowUnfollowWebService(HashTag hashTag) {
+        //Create request
+        SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.HASHTAG_FOLLOW_UNFOLLOW_METHOD_NAME);
+        //Property which holds input parameters
+        PropertyInfo userId = new PropertyInfo();
+        //Set Name
+        userId.setName("UserId");
+        //Set Value
+        userId.setValue(hashTag.getUserId());
+        //Set dataType
+        userId.setType(String.class);
+        //Add the property to request object
+
+        //Property which holds input parameters
+        PropertyInfo hashTagProperty = new PropertyInfo();
+        //Set Name
+        hashTagProperty.setName("HashTag");
+        //Set Value
+        hashTagProperty.setValue(hashTag.getHashTag());
+        //Set dataType
+        hashTagProperty.setType(String.class);
+        //Add the property to request object
+
+
+        //Property which holds input parameters
+        PropertyInfo flag = new PropertyInfo();
+        //Set Name
+        flag.setName("flag");
+        //Set Value
+        flag.setValue(hashTag.getFlag());
+        //Set dataType
+        flag.setType(String.class);
+
+
+
+
+        //Add the property to request object
+        request.addProperty(userId);
+        request.addProperty(hashTagProperty);
+        request.addProperty(flag);
+
+
+        //Create envelope
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+                SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        //Set output SOAP object
+        envelope.setOutputSoapObject(request);
+
+
+        //Create HTTP call object
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(Constants.HASHTAG_FOLLOW_UNFOLLOW_URL);
+
+        try {
+            //Invole web service
+            androidHttpTransport.call(Constants.HASHTAG_FOLLOW_UNFOLLOW_ACTION, envelope);
+            //Get the response
+            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+            //Assign it to fahren static variable
+            String responseFromService = response.toString();
+            System.out.println("Response for Follow Unfollow " + responseFromService);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public String sendContactDetails(String userNumber) {
         //Create request
         SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.CONTACT_METHOD_NAME);

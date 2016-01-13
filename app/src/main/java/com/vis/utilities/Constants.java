@@ -84,6 +84,10 @@ public class Constants {
     public static final String FEEDBACK_ACTION = "http://tempuri.org/UserFeedback";
     public static final String FEEDBACK_METHOD_NAME = "UserFeedback";
 
+    public static final String HASHTAG_FOLLOW_UNFOLLOW_URL = "http://service.videoinshort.com/savefbuserdata.asmx";
+    public static final String HASHTAG_FOLLOW_UNFOLLOW_ACTION = "http://tempuri.org/SaveFollowUnfollowHashtag";
+    public static final String HASHTAG_FOLLOW_UNFOLLOW_METHOD_NAME = "SaveFollowUnfollowHashtag";
+
 
     public static final String NAMESPACE = "http://tempuri.org/";
     public static final String MENU_SETTINGS = "menusettings";
@@ -98,6 +102,7 @@ public class Constants {
     public static final int VIDEO_VIEW = 7;
     public static final int SHARE_DATA = 8;
     public static final int FEEDBACK = 9 ;
+    public static final int FOLLOW_UNFOLLOW = 10 ;
     public static String SEND_REG_ID = "REGID";
     public static String SEND_CONTACTS = "CONTACTS";
 

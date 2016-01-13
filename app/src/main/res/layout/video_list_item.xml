@@ -102,6 +102,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="hashtag1"
+                        android:layout_marginBottom="5dp"
                         android:textColor="@color/hashtag_color" />
 
                     <TextView
@@ -109,6 +110,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="hashtag2"
+                        android:layout_marginBottom="5dp"
                         android:textColor="@color/hashtag_color" />
 
                     <TextView

@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.video_list_demo);
 
         utility = new Utility(this);
-        toolbar = (Toolbar) findViewById(R.id.MyToolbar);
+
         noInternetMessage = (RelativeLayout) findViewById(R.id.no_internet_message);
         listViewContainer = (RelativeLayout) findViewById(R.id.list_view_container);
         refreshButton = (Button) findViewById(R.id.refreshButton);

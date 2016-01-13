@@ -19,11 +19,9 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -31,8 +29,6 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -64,7 +60,6 @@ import com.vis.R;
 import com.vis.adapters.PageAdapterForRecycler;
 import com.vis.beans.AppActive;
 import com.vis.beans.FbProfile;
-import com.vis.beans.Registration;
 import com.vis.beans.VideoEntry;
 import com.vis.utilities.Constants;
 import com.vis.utilities.GenericScrollListener;
@@ -107,16 +102,15 @@ public class HashTagActivity extends AppCompatActivity {
     Button refreshButton;
     Utility utility;
     FbProfile fbProfile;
-    BroadcastReceiver broadcast_reciever;
+
     SharedPreferences prefs;
-    Toolbar toolbar;
-    CollapsingToolbarLayout collapsingToolbar;
-    AppBarLayout appBarLayout;
+
     PageAdapterForRecycler adapter;
     private LinearLayoutManager mLayoutManager;
     private Toolbar mToolbar;
     private List<VideoEntry> mainList;
     String hashTag;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +119,10 @@ public class HashTagActivity extends AppCompatActivity {
         setContentView(R.layout.activity_hash_tag);
 
         utility = new Utility(this);
-        toolbar = (Toolbar) findViewById(R.id.MyToolbar);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Please wait..");
+        progressDialog.setCancelable(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         noInternetMessage = (RelativeLayout) findViewById(R.id.no_internet_message);
         listViewContainer = (RelativeLayout) findViewById(R.id.list_view_container);
         refreshButton = (Button) findViewById(R.id.refreshButton);
@@ -138,12 +135,7 @@ public class HashTagActivity extends AppCompatActivity {
         mContext = this;
         prefs = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
         recyclerView = (RecyclerView) findViewById(R.id.list_fragment);
-
         String responseFromFb = getIntent().getStringExtra(Constants.FB_USER_INFO);
-        hashTag = getIntent().getStringExtra(Constants.HASHTAG);
-        Toolbar toolbarTop = (Toolbar) findViewById(R.id.toolbar);
-        TextView mTitle = (TextView) toolbarTop.findViewById(R.id.hashtag);
-        mTitle.setText(hashTag);
         if (responseFromFb != null && !responseFromFb.isEmpty()) {
             fbProfile = new Gson().fromJson(responseFromFb, FbProfile.class);
         } else {
@@ -152,6 +144,47 @@ public class HashTagActivity extends AppCompatActivity {
                 fbProfile = new Gson().fromJson(responseFromDb, FbProfile.class);
             }
         }
+
+        hashTag = getIntent().getStringExtra(Constants.HASHTAG);
+        TextView mTitle = (TextView) mToolbar.findViewById(R.id.hashtag);
+        mTitle.setText(hashTag);
+        Button back = (Button) mToolbar.findViewById(R.id.button_back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        final Button followUnfollow = (Button) mToolbar.findViewById(R.id.button_followandunfollow);
+        followUnfollow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                progressDialog.show();
+                HashTag hash = new HashTag();
+                hash.setUserId(fbProfile.getFbUserId());
+
+                hash.setHashTag(hashTag);
+                hash.setProgressDialog(progressDialog);
+                String text = followUnfollow.getText().toString();
+                if(text.equalsIgnoreCase("FOLLOW"))
+                {
+                    hash.setFlag("1");
+                    followUnfollow.setText("UNFOLLOW");
+                    new WebServiceUtility(HashTagActivity.this,Constants.FOLLOW_UNFOLLOW,hash);
+                }
+                else
+                {
+                    hash.setFlag("0");
+                    followUnfollow.setText("FOLLOW");
+                    new WebServiceUtility(HashTagActivity.this,Constants.FOLLOW_UNFOLLOW,hash);
+                }
+
+
+            }
+        });
+
 
         if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(this);
