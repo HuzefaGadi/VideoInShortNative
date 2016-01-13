@@ -17,6 +17,7 @@ import com.vis.beans.AppActive;
 import com.vis.beans.Contact;
 import com.vis.beans.FbProfile;
 import com.vis.beans.Feedback;
+import com.vis.beans.HashTagBean;
 import com.vis.beans.Location;
 import com.vis.beans.NotificationMessage;
 import com.vis.beans.Registration;
@@ -176,7 +177,7 @@ public class WebServiceUtility {
             } else if (action == Constants.FEEDBACK) {
                 callFeedbackService((Feedback)params[0]);
             } else if (action == Constants.FOLLOW_UNFOLLOW) {
-                HashTag hashTag = (HashTag)params[0];
+                HashTagBean hashTag = (HashTagBean)params[0];
                 progressDialog = hashTag.getProgressDialog();
                 callFollowUnfollowWebService(hashTag);
             }
@@ -797,7 +798,7 @@ public class WebServiceUtility {
         }
     }
 
-    public void callFollowUnfollowWebService(HashTag hashTag) {
+    public void callFollowUnfollowWebService(HashTagBean hashTag) {
         //Create request
         SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.HASHTAG_FOLLOW_UNFOLLOW_METHOD_NAME);
         //Property which holds input parameters

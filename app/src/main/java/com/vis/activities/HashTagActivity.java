@@ -60,6 +60,7 @@ import com.vis.R;
 import com.vis.adapters.PageAdapterForRecycler;
 import com.vis.beans.AppActive;
 import com.vis.beans.FbProfile;
+import com.vis.beans.HashTagBean;
 import com.vis.beans.VideoEntry;
 import com.vis.utilities.Constants;
 import com.vis.utilities.GenericScrollListener;
@@ -162,7 +163,7 @@ public class HashTagActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 progressDialog.show();
-                HashTag hash = new HashTag();
+                HashTagBean hash = new HashTagBean();
                 hash.setUserId(fbProfile.getFbUserId());
 
                 hash.setHashTag(hashTag);
@@ -514,36 +515,7 @@ public class HashTagActivity extends AppCompatActivity {
         return registrationId;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-            Intent intent = new Intent(this, FacebookActivity.class);
-            intent.putExtra(Constants.MENU_SETTINGS, true);
-            startActivity(intent);
-            finish();
-            return true;
-        } else if (id == R.id.action_feedback) {
-            Intent intent = new Intent(this, FeedbackActivity.class);
-            intent.putExtra(Constants.MENU_SETTINGS, true);
-            startActivity(intent);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     /**
      * Registers the application with GCM servers asynchronously.
@@ -670,7 +642,7 @@ public class HashTagActivity extends AppCompatActivity {
         //Set output SOAP object
 
         PropertyInfo hashTagProperty = new PropertyInfo();
-        hashTagProperty.setName("HashTag");
+        hashTagProperty.setName("HashTagBean");
         hashTagProperty.setValue(hashTag);
         hashTagProperty.setType(String.class);
         request.addProperty(hashTagProperty);
