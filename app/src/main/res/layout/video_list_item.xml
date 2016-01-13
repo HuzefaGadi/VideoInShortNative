@@ -83,7 +83,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:layout_alignBottom="@+id/imageFrame"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignTop="@+id/imageFrame"
                 android:layout_below="@+id/text"

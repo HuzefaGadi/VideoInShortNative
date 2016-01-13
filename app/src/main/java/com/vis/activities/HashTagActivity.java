@@ -610,10 +610,14 @@ public class HashTagActivity extends AppCompatActivity {
 
             // use a linear layout manager
             recyclerView.setHasFixedSize(true);
-            PageAdapterForRecycler adapter = (PageAdapterForRecycler) recyclerView.getAdapter();
-            adapter.setListEntries(videoEntries);
-            adapter.notifyDataSetChanged();
-            recyclerView.requestLayout();
+            if(videoEntries!=null)
+            {
+                PageAdapterForRecycler adapter = (PageAdapterForRecycler) recyclerView.getAdapter();
+                adapter.setListEntries(videoEntries);
+                adapter.notifyDataSetChanged();
+                recyclerView.requestLayout();
+            }
+
             dialog.cancel();
         }
     }
@@ -642,7 +646,7 @@ public class HashTagActivity extends AppCompatActivity {
         //Set output SOAP object
 
         PropertyInfo hashTagProperty = new PropertyInfo();
-        hashTagProperty.setName("HashTagBean");
+        hashTagProperty.setName("HashTag");
         hashTagProperty.setValue(hashTag);
         hashTagProperty.setType(String.class);
         request.addProperty(hashTagProperty);
