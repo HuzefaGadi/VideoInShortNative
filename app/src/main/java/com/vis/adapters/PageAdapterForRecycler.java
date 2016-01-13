@@ -198,8 +198,25 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
                 }
             });
 
+            view.fbShare.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    shareOnFacebook((String) view.getTag());
+                }
+            });
+            view.watsappShare.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        String tags[] = ((String) view.getTag()).split(";");
+                        shareOnWatsapp(tags[0], tags[1]);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
-            view.fbShare.setOnTouchListener(new View.OnTouchListener() {
+            /*view.fbShare.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     switch (event.getAction()) {
@@ -249,7 +266,7 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
                     }
                     return false;
                 }
-            });
+            });*/
 
             view.hashTag1.setOnClickListener(new View.OnClickListener() {
                 @Override

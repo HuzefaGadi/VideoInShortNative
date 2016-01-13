@@ -6,6 +6,7 @@ package com.vis.utilities;
 public class Constants {
     public static final String PREFERENCES_NAME = "preferences";
     public static final String FB_USER_INFO = "fbUserInfo";
+    public static final String HASHTAG = "hashtag";
 
     public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
@@ -63,6 +64,10 @@ public class Constants {
     public static final String VIDEOS_SOAP_ACTION = "http://tempuri.org/SentListOfVideo";
     public static final String VIDEOS_METHOD_NAME = "SentListOfVideo";
 
+    public static final String HASHTAG_VIDEOS_URL = "http://service.videoinshort.com/savefbuserdata.asmx";
+    public static final String HASHTAG_VIDEOS_SOAP_ACTION = "http://tempuri.org/SendVideoListByHashTag";
+    public static final String HASHTAG_VIDEOS_METHOD_NAME = "SendVideoListByHashTag";
+
     public static final String VIDEOS_VIEW_URL = "http://service.videoinshort.com/savefbuserdata.asmx";
     public static final String VIDEOS_VIEW_SOAP_ACTION = "http://tempuri.org/VideoViewData";
     public static final String VIDEOS_VIEW_METHOD_NAME = "VideoViewData";
@@ -92,7 +97,6 @@ public class Constants {
     public static final String USER_AGENT_POSTFIX_WITHOUT_FACEBOOK = "VideoInShort";
     public static final int VIDEO_VIEW = 7;
     public static final int SHARE_DATA = 8;
-
     public static final int FEEDBACK = 9 ;
     public static String SEND_REG_ID = "REGID";
     public static String SEND_CONTACTS = "CONTACTS";
@@ -103,8 +107,6 @@ public class Constants {
 
     public static final String WIFI = "W";
     public static final String MOBILEDATA = "M";
-
-
 
 
 }
