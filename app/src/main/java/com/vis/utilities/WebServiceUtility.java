@@ -187,10 +187,16 @@ public class WebServiceUtility {
         @Override
         protected void onPostExecute(String result) {
             Log.i(Constants.TAG, "onPostExecute");
-            if(progressDialog!=null)
+            try{
+                if(progressDialog!=null)
+                {
+                    progressDialog.cancel();
+                }
+            }catch (Exception e)
             {
-                progressDialog.cancel();
+                e.printStackTrace();
             }
+
         }
 
         @Override
