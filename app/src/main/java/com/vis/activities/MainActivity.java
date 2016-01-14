@@ -31,6 +31,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -45,7 +46,6 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -68,6 +68,7 @@ import com.vis.beans.AppActive;
 import com.vis.beans.FbProfile;
 import com.vis.beans.Registration;
 import com.vis.beans.VideoEntry;
+import com.vis.beans.VideoViewBean;
 import com.vis.utilities.Constants;
 import com.vis.utilities.GenericScrollListener;
 import com.vis.utilities.Utility;
@@ -83,13 +84,14 @@ import org.ksoap2.transport.HttpTransportSE;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A sample Activity showing how to manage multiple YouTubeThumbnailViews in an adapter for display
  * in a List. When the list items are clicked, the video is played by using a YouTubePlayerFragment.
- * <p/>
+ * <p>
  * The demo supports custom fullscreen and transitioning between portrait and landscape without
  * rebuffering.
  */
@@ -118,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
     PageAdapterForRecycler adapter;
     private LinearLayoutManager mLayoutManager;
     private Toolbar mToolbar;
-    private List <VideoEntry> mainList;
+    private List<VideoEntry> mainList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,6 +244,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        onDeepLinkIntent(getIntent());
         //  new WebServiceUtility(this,Constants.GET_VIDEOS,null);
     }
 
@@ -332,8 +336,28 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        setIntent(intent);
-        processIntent(getIntent());
+
+
+        String action = intent.getAction();
+        String data = intent.getDataString();
+        if (Intent.ACTION_VIEW.equals(action) && data != null) {
+
+        } else {
+            setIntent(intent);
+            processIntent(getIntent());
+        }
+
+
+    }
+    void onDeepLinkIntent(Intent intent)
+    {
+        String action = intent.getAction();
+        String data = intent.getDataString();
+        if (Intent.ACTION_VIEW.equals(action) && data != null) {
+            String videoId = data.substring(data.lastIndexOf("/") + 1);
+
+            showFullScreenVideo(videoId);
+        }
     }
 
     void processIntent(Intent intent) {
@@ -519,7 +543,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Gets the current registration ID for application on GCM service, if there is one.
-     * <p/>
+     * <p>
      * If result is empty, the app needs to register.
      *
      * @return registration ID, or empty string if there is no existing
@@ -565,8 +589,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
             return true;
-        }
-        else if (id == R.id.action_feedback) {
+        } else if (id == R.id.action_feedback) {
             Intent intent = new Intent(this, FeedbackActivity.class);
             intent.putExtra(Constants.MENU_SETTINGS, true);
             startActivity(intent);
@@ -578,7 +601,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Registers the application with GCM servers asynchronously.
-     * <p/>
+     * <p>
      * Stores the registration ID and the app versionCode in the application's
      * shared preferences.
      */
@@ -669,7 +692,7 @@ public class MainActivity extends AppCompatActivity {
 
             // use a linear layout manager
             recyclerView.setHasFixedSize(true);
-            PageAdapterForRecycler adapter = (PageAdapterForRecycler)recyclerView.getAdapter();
+            PageAdapterForRecycler adapter = (PageAdapterForRecycler) recyclerView.getAdapter();
             adapter.setListEntries(videoEntries);
             adapter.notifyDataSetChanged();
             recyclerView.requestLayout();
@@ -828,5 +851,37 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
+    private void showFullScreenVideo(String videoId) {
+        String networkConstant = utility.connectedNetwork();
+        String userId =null;
+        if(fbProfile!=null)
+        {
+            userId = fbProfile.getFbUserId();
+        }
+       /* VideoViewBean videoViewBean = new VideoViewBean();
+        videoViewBean.setVideoId(videoId);
+        videoViewBean.setUserId(userId);
+        videoViewBean.setDate(new Date().toString());
+        videoViewBean.setNetworkType(networkConstant);
+        new WebServiceUtility(mContext, Constants.VIDEO_VIEW, videoViewBean);*/
+        Intent intent = null;
 
+        if (networkConstant != null && networkConstant.equals(Constants.WIFI)) {
+            intent = new Intent(mContext, ShowVideoActivity.class);
+        } else {
+            intent = new Intent(mContext, ShowVideoInIFrameActivity.class);
+        }
+
+        intent.putExtra("VIDEO_ID", videoId);
+        if(mContext instanceof MainActivity)
+        {
+            ((MainActivity) mContext).startActivityForResult(intent, 10);
+        }
+        else
+        {
+            ((HashTagActivity) mContext).startActivityForResult(intent, 10);
+        }
+
+    }
 }

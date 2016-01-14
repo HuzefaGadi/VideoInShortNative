@@ -105,13 +105,14 @@ public class HashTagActivity extends AppCompatActivity {
     FbProfile fbProfile;
 
     SharedPreferences prefs;
-
+    boolean isHashTagFollowing = false;
     PageAdapterForRecycler adapter;
     private LinearLayoutManager mLayoutManager;
     private Toolbar mToolbar;
     private List<VideoEntry> mainList;
     String hashTag;
     ProgressDialog progressDialog;
+    Button followUnFollow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,8 +158,8 @@ public class HashTagActivity extends AppCompatActivity {
             }
         });
 
-        final Button followUnfollow = (Button) mToolbar.findViewById(R.id.button_followandunfollow);
-        followUnfollow.setOnClickListener(new View.OnClickListener() {
+        followUnFollow = (Button) mToolbar.findViewById(R.id.button_followandunfollow);
+        followUnFollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -168,17 +169,17 @@ public class HashTagActivity extends AppCompatActivity {
 
                 hash.setHashTag(hashTag);
                 hash.setProgressDialog(progressDialog);
-                String text = followUnfollow.getText().toString();
+                String text = followUnFollow.getText().toString();
                 if(text.equalsIgnoreCase("FOLLOW"))
                 {
                     hash.setFlag("1");
-                    followUnfollow.setText("UNFOLLOW");
+                    followUnFollow.setText("UNFOLLOW");
                     new WebServiceUtility(HashTagActivity.this,Constants.FOLLOW_UNFOLLOW,hash);
                 }
                 else
                 {
                     hash.setFlag("0");
-                    followUnfollow.setText("FOLLOW");
+                    followUnFollow.setText("FOLLOW");
                     new WebServiceUtility(HashTagActivity.this,Constants.FOLLOW_UNFOLLOW,hash);
                 }
 
@@ -616,6 +617,14 @@ public class HashTagActivity extends AppCompatActivity {
                 adapter.setListEntries(videoEntries);
                 adapter.notifyDataSetChanged();
                 recyclerView.requestLayout();
+                if(isHashTagFollowing)
+                {
+                    followUnFollow.setText("UNFOLLOW");
+                }
+                else
+                {
+                    followUnFollow.setText("FOLLOW");
+                }
             }
 
             dialog.cancel();
@@ -646,10 +655,19 @@ public class HashTagActivity extends AppCompatActivity {
         //Set output SOAP object
 
         PropertyInfo hashTagProperty = new PropertyInfo();
-        hashTagProperty.setName("HashTag");
+        hashTagProperty.setName("hashTag");
         hashTagProperty.setValue(hashTag);
         hashTagProperty.setType(String.class);
+
+        PropertyInfo userId = new PropertyInfo();
+        userId.setName("UserId");
+        userId.setValue(fbProfile.getFbUserId());
+        userId.setType(String.class);
+
+
+
         request.addProperty(hashTagProperty);
+        request.addProperty(userId);
         envelope.setOutputSoapObject(request);
 
 
@@ -664,8 +682,9 @@ public class HashTagActivity extends AppCompatActivity {
             //Assign it to fahren static variable
 
             List<VideoEntry> videosList = new ArrayList<VideoEntry>();
-
             SoapObject resultRequestSOAP = (SoapObject) envelope.bodyIn;
+            String following = resultRequestSOAP.getPropertyAsString("tagstatus");
+            isHashTagFollowing = following.equalsIgnoreCase("1")?true:false;
             SoapObject root = (SoapObject) resultRequestSOAP.getProperty("SendVideoListByHashTagResult");
             int count = root.getPropertyCount();
             for (int i = 0; i < count; i++) {

@@ -97,7 +97,7 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
             width = height;
         }
         width = (width * 80) / 100;
-        height = (width * 60) / 100;
+        height = (width * 55) / 100;
 
         imageLoadingListener = new ImageLoadingListener();
         imageLoader = ImageLoader.getInstance();
@@ -289,6 +289,7 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(mContext, HashTagActivity.class);
+
                     intent.putExtra(Constants.HASHTAG,String.valueOf(view.getTag()));
                     mContext.startActivity(intent);
                 }
@@ -298,6 +299,7 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(mContext, HashTagActivity.class);
+
                     intent.putExtra(Constants.HASHTAG, String.valueOf(view.getTag()));
                     mContext.startActivity(intent);
                 }
@@ -307,6 +309,7 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(mContext, HashTagActivity.class);
+
                     intent.putExtra(Constants.HASHTAG, String.valueOf(view.getTag()));
                     mContext.startActivity(intent);
                 }

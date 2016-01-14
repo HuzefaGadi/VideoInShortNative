@@ -78,47 +78,55 @@
 
             </FrameLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageFrame"
+                android:id="@+id/hashtagLayout"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="20dp"
+                android:orientation="horizontal">
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_alignBottom="@+id/imageFrame"
-                android:layout_alignParentRight="true"
-                android:layout_alignTop="@+id/imageFrame"
-                android:layout_below="@+id/text"
-                android:layout_marginLeft="20dp">
-
-                <LinearLayout
+                <TextView
+                    android:id="@+id/hashtag1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_above="@+id/shareOn"
-                    android:layout_marginTop="20dp"
-                    android:layout_alignParentTop="true"
-                    android:orientation="vertical">
+                    android:text="hashtag1"
+                    android:textSize="15dp"
+                    android:layout_marginRight="10dp"
+                    android:textColor="@color/hashtag_color" />
 
-                    <TextView
-                        android:id="@+id/hashtag1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="hashtag1"
-                        android:layout_marginBottom="5dp"
-                        android:textColor="@color/hashtag_color" />
+                <TextView
+                    android:id="@+id/hashtag2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="hashtag2"
+                    android:textSize="15dp"
+                    android:layout_marginRight="10dp"
+                    android:textColor="@color/hashtag_color" />
 
-                    <TextView
-                        android:id="@+id/hashtag2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="hashtag2"
-                        android:layout_marginBottom="5dp"
-                        android:textColor="@color/hashtag_color" />
+                <TextView
+                    android:id="@+id/hashtag3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="hashtag3"
+                    android:textSize="15dp"
+                    android:textColor="@color/hashtag_color" />
+            </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/hashtag3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="hashtag3"
-                        android:textColor="@color/hashtag_color" />
-                </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="bottom"
+                android:layout_alignBottom="@+id/hashtagLayout"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/text"
+                android:id="@+id/shareLayout"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="20dp">
+
+
 
                 <TextView
                     android:id="@+id/shareOn"
@@ -153,7 +161,7 @@
                     android:focusableInTouchMode="false"
                     android:src="@mipmap/ic_watsapp" />
 
-            </RelativeLayout>
+            </LinearLayout>
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>
