@@ -15,7 +15,7 @@
     <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="crash_toast_text">App Crashed Sending Report</string>
-   <string name="terms">By Log in, you agree to our <a href="http://videoinshort.com/privacypolicy.html">Terms</a> and <a href="http://videoinshort.com/privacypolicy.html">Privacy Policy</a></string>
+    <string name="terms">By Log in, you agree to our <a href="http://videoinshort.com/privacypolicy.html">Terms</a> and <a href="http://videoinshort.com/privacypolicy.html">Privacy Policy</a></string>
     <string name="title_activity_show_video_in_iframe">ShowVideoInIFrameActivity</string>
     <string name="error_occured">Oops! It seems something went wrong, Please click on OK to report the issue to Vint.</string>
     <string name="title_activity_feedback">Feedback</string>
@@ -23,4 +23,6 @@
     <string name="hint_email">Email</string>
     <string name="hint_feedback">Enter your feedback</string>
     <string name="title_activity_hash_tag">HashTagActivity</string>
+    <string name="interest_activity">Please select your Interests</string>
+    <string name="action_interest">Interests</string>
 </resources>

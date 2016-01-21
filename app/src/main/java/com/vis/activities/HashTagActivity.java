@@ -34,8 +34,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -55,7 +53,6 @@ import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.gson.Gson;
 import com.vis.Analytics;
-import com.vis.FacebookActivity;
 import com.vis.R;
 import com.vis.adapters.PageAdapterForRecycler;
 import com.vis.beans.AppActive;
@@ -82,7 +79,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * A sample Activity showing how to manage multiple YouTubeThumbnailViews in an adapter for display
  * in a List. When the list items are clicked, the video is played by using a YouTubePlayerFragment.
- * <p>
+ * <p/>
  * The demo supports custom fullscreen and transitioning between portrait and landscape without
  * rebuffering.
  */
@@ -170,17 +167,14 @@ public class HashTagActivity extends AppCompatActivity {
                 hash.setHashTag(hashTag);
                 hash.setProgressDialog(progressDialog);
                 String text = followUnFollow.getText().toString();
-                if(text.equalsIgnoreCase("FOLLOW"))
-                {
+                if (text.equalsIgnoreCase("FOLLOW")) {
                     hash.setFlag("1");
                     followUnFollow.setText("UNFOLLOW");
-                    new WebServiceUtility(HashTagActivity.this,Constants.FOLLOW_UNFOLLOW,hash);
-                }
-                else
-                {
+                    new WebServiceUtility(HashTagActivity.this, Constants.FOLLOW_UNFOLLOW, hash);
+                } else {
                     hash.setFlag("0");
                     followUnFollow.setText("FOLLOW");
-                    new WebServiceUtility(HashTagActivity.this,Constants.FOLLOW_UNFOLLOW,hash);
+                    new WebServiceUtility(HashTagActivity.this, Constants.FOLLOW_UNFOLLOW, hash);
                 }
 
 
@@ -264,7 +258,6 @@ public class HashTagActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
     }
-
 
 
     private void checkYouTubeApi() {
@@ -376,14 +369,7 @@ public class HashTagActivity extends AppCompatActivity {
     protected void onStart() {
         // TODO Auto-generated method stub
         super.onStart();
-
-        System.out.println("TRANSITION ONSTART");
-        SharedPreferences pref = getPreferences(this);
-        if (pref.getBoolean(Constants.PREFERENCES_SHOW_ALARM, false) && !pref.getBoolean(Constants.PREFERENCES_ALREADY_RATED, false)) {
-            rateUs("You are awesome! If you feel the same about VideoInShort, please take a moment to rate it.");
-        }
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
-
     }
 
 
@@ -392,62 +378,6 @@ public class HashTagActivity extends AppCompatActivity {
         // TODO Auto-generated method stub
         super.onStop();
         GoogleAnalytics.getInstance(this).reportActivityStop(this);
-
-    }
-
-    private void rateUs(String message) {
-
-        final SharedPreferences prefs = getPreferences(this);
-        Tracker t = ((Analytics) getApplication()).getDefaultTracker();
-        t.enableAdvertisingIdCollection(true);
-        // Build and send an Event.
-        t.send(new HitBuilders.EventBuilder()
-                .setCategory("Alert View")
-                .setAction("Rate Us")
-                .setLabel("Rate Us called")
-
-                .build());
-
-
-        AlertDialog dialog = new AlertDialog.Builder(this).create();
-        t.enableAdvertisingIdCollection(true);
-        dialog.setTitle("Rate Us!!");
-        dialog.setMessage(message);
-        dialog.setIcon(R.mipmap.ic_launcher);
-
-        dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Now", new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int id) {
-
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getApplicationContext().getPackageName())));
-                prefs.edit().putBoolean(Constants.PREFERENCES_SHOW_ALARM, false).commit();
-                prefs.edit().putBoolean(Constants.PREFERENCES_ALREADY_RATED, true).commit();
-
-            }
-        });
-
-        dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Later", new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int id) {
-
-                dialog.cancel();
-                prefs.edit().putBoolean(Constants.PREFERENCES_SHOW_ALARM, false).commit();
-
-            }
-        });
-
-        dialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Never", new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int id) {
-
-                dialog.cancel();
-                prefs.edit().putBoolean(Constants.PREFERENCES_SHOW_ALARM, false).commit();
-                prefs.edit().putBoolean(Constants.PREFERENCES_ALREADY_RATED, true).commit();
-
-            }
-        });
-
-        dialog.show();
 
     }
 
@@ -491,7 +421,7 @@ public class HashTagActivity extends AppCompatActivity {
 
     /**
      * Gets the current registration ID for application on GCM service, if there is one.
-     * <p>
+     * <p/>
      * If result is empty, the app needs to register.
      *
      * @return registration ID, or empty string if there is no existing
@@ -517,10 +447,9 @@ public class HashTagActivity extends AppCompatActivity {
     }
 
 
-
     /**
      * Registers the application with GCM servers asynchronously.
-     * <p>
+     * <p/>
      * Stores the registration ID and the app versionCode in the application's
      * shared preferences.
      */
@@ -611,23 +540,22 @@ public class HashTagActivity extends AppCompatActivity {
 
             // use a linear layout manager
             recyclerView.setHasFixedSize(true);
-            if(videoEntries!=null)
-            {
+            if (videoEntries != null) {
                 PageAdapterForRecycler adapter = (PageAdapterForRecycler) recyclerView.getAdapter();
                 adapter.setListEntries(videoEntries);
                 adapter.notifyDataSetChanged();
                 recyclerView.requestLayout();
-                if(isHashTagFollowing)
-                {
+                if (isHashTagFollowing) {
                     followUnFollow.setText("UNFOLLOW");
-                }
-                else
-                {
+                } else {
                     followUnFollow.setText("FOLLOW");
                 }
             }
 
-            dialog.cancel();
+            if (dialog != null && dialog.isShowing()) {
+                dialog.cancel();
+            }
+
         }
     }
 
@@ -665,7 +593,6 @@ public class HashTagActivity extends AppCompatActivity {
         userId.setType(String.class);
 
 
-
         request.addProperty(hashTagProperty);
         request.addProperty(userId);
         envelope.setOutputSoapObject(request);
@@ -684,7 +611,7 @@ public class HashTagActivity extends AppCompatActivity {
             List<VideoEntry> videosList = new ArrayList<VideoEntry>();
             SoapObject resultRequestSOAP = (SoapObject) envelope.bodyIn;
             String following = resultRequestSOAP.getPropertyAsString("tagstatus");
-            isHashTagFollowing = following.equalsIgnoreCase("1")?true:false;
+            isHashTagFollowing = following.equalsIgnoreCase("1") ? true : false;
             SoapObject root = (SoapObject) resultRequestSOAP.getProperty("SendVideoListByHashTagResult");
             int count = root.getPropertyCount();
             for (int i = 0; i < count; i++) {
@@ -710,13 +637,10 @@ public class HashTagActivity extends AppCompatActivity {
             }
             mainList = videosList;
             List list;
-            if(mainList.size() >= 33)
-            {
+            if (mainList.size() >= 33) {
                 list = videosList.subList(0, 33);
-            }
-            else
-            {
-                 list = videosList.subList(0, mainList.size());
+            } else {
+                list = videosList.subList(0, mainList.size());
             }
 
             return list;

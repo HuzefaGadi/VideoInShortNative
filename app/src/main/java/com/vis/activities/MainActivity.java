@@ -68,12 +68,12 @@ import com.vis.beans.AppActive;
 import com.vis.beans.FbProfile;
 import com.vis.beans.Registration;
 import com.vis.beans.VideoEntry;
-import com.vis.beans.VideoViewBean;
 import com.vis.utilities.Constants;
 import com.vis.utilities.GenericScrollListener;
 import com.vis.utilities.Utility;
 import com.vis.utilities.WebServiceUtility;
 
+import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
@@ -84,14 +84,17 @@ import org.ksoap2.transport.HttpTransportSE;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import io.branch.referral.Branch;
+import io.branch.referral.BranchError;
 
 /**
  * A sample Activity showing how to manage multiple YouTubeThumbnailViews in an adapter for display
  * in a List. When the list items are clicked, the video is played by using a YouTubePlayerFragment.
- * <p>
+ * <p/>
  * The demo supports custom fullscreen and transitioning between portrait and landscape without
  * rebuffering.
  */
@@ -205,7 +208,14 @@ public class MainActivity extends AppCompatActivity {
         if (utility.checkInternetConnectivity()) {
             listViewContainer.setVisibility(View.VISIBLE);
             noInternetMessage.setVisibility(View.GONE);
-            loadListView();
+
+            if (prefs.getBoolean(Constants.PREFERENCES_INTEREST, false)) {
+                loadListView();
+            } else {
+                Intent intent = new Intent(this, InterestActivity.class);
+                startActivityForResult(intent, Constants.INTENT_REQUEST_CODE_FOR_INTEREST);
+            }
+
             // mainWebView.loadUrl(Constants.url);
         } else {
             listViewContainer.setVisibility(View.GONE);
@@ -317,10 +327,11 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == RECOVERY_DIALOG_REQUEST) {
             // Recreate the activity if user performed a recovery action
             recreate();
+        } else if (requestCode == Constants.INTENT_REQUEST_CODE_FOR_INTEREST) {
+            loadListView();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
             adapter.callbackManager.onActivityResult(requestCode, resultCode, data);
-
             recyclerView.requestLayout();
 
         }
@@ -349,15 +360,26 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-    void onDeepLinkIntent(Intent intent)
-    {
-        String action = intent.getAction();
+
+    void onDeepLinkIntent(Intent intent) {
+       /* String action = intent.getAction();
         String data = intent.getDataString();
         if (Intent.ACTION_VIEW.equals(action) && data != null) {
             String videoId = data.substring(data.lastIndexOf("/") + 1);
 
             showFullScreenVideo(videoId);
-        }
+        }*/
+
+        Branch branch = Branch.getInstance();
+        branch.initSession(new Branch.BranchReferralInitListener() {
+            @Override
+            public void onInitFinished(JSONObject referringParams, BranchError error) {
+                if (error == null) {
+                    // params are the deep linked params associated with the link that the user clicked before showing up
+                    Log.i("BranchConfigTest", "deep link data: " + referringParams.toString());
+                }
+            }
+        }, intent.getData(), this);
     }
 
     void processIntent(Intent intent) {
@@ -450,6 +472,7 @@ public class MainActivity extends AppCompatActivity {
     private void rateUs(String message) {
 
         final SharedPreferences prefs = getPreferences(this);
+        final SharedPreferences.Editor editor = prefs.edit();
         Tracker t = ((Analytics) getApplication()).getDefaultTracker();
         t.enableAdvertisingIdCollection(true);
         // Build and send an Event.
@@ -472,8 +495,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
 
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getApplicationContext().getPackageName())));
-                prefs.edit().putBoolean(Constants.PREFERENCES_SHOW_ALARM, false).commit();
-                prefs.edit().putBoolean(Constants.PREFERENCES_ALREADY_RATED, true).commit();
+                editor.putBoolean(Constants.PREFERENCES_SHOW_ALARM, false).commit();
+                editor.putBoolean(Constants.PREFERENCES_ALREADY_RATED, true).commit();
+                editor.apply();
 
             }
         });
@@ -483,7 +507,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
 
                 dialog.cancel();
-                prefs.edit().putBoolean(Constants.PREFERENCES_SHOW_ALARM, false).commit();
+                editor.putBoolean(Constants.PREFERENCES_SHOW_ALARM, false).commit();
+                editor.apply();
 
             }
         });
@@ -493,8 +518,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
 
                 dialog.cancel();
-                prefs.edit().putBoolean(Constants.PREFERENCES_SHOW_ALARM, false).commit();
-                prefs.edit().putBoolean(Constants.PREFERENCES_ALREADY_RATED, true).commit();
+                editor.putBoolean(Constants.PREFERENCES_SHOW_ALARM, false).commit();
+                editor.putBoolean(Constants.PREFERENCES_ALREADY_RATED, true).commit();
+                editor.apply();
 
             }
         });
@@ -543,7 +569,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Gets the current registration ID for application on GCM service, if there is one.
-     * <p>
+     * <p/>
      * If result is empty, the app needs to register.
      *
      * @return registration ID, or empty string if there is no existing
@@ -594,6 +620,11 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(Constants.MENU_SETTINGS, true);
             startActivity(intent);
             return true;
+        } else if (id == R.id.action_interest) {
+            Intent intent = new Intent(this, InterestActivity.class);
+            intent.putExtra(Constants.MENU_SETTINGS, true);
+            startActivity(intent);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -601,7 +632,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Registers the application with GCM servers asynchronously.
-     * <p>
+     * <p/>
      * Stores the registration ID and the app versionCode in the application's
      * shared preferences.
      */
@@ -677,7 +708,14 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected List<VideoEntry> doInBackground(Void... params) {
-            return getVideosList();
+
+            Set<String> selectedInterest = prefs.getStringSet(Constants.PREFERENCES_SELECTED_INTERESTS, null);
+            if (selectedInterest != null && selectedInterest.size() > 0) {
+                return getVideosListWithHashTags(selectedInterest);
+            } else {
+                return getVideosList();
+            }
+
         }
 
         @Override
@@ -691,11 +729,13 @@ public class MainActivity extends AppCompatActivity {
 
 
             // use a linear layout manager
-            recyclerView.setHasFixedSize(true);
-            PageAdapterForRecycler adapter = (PageAdapterForRecycler) recyclerView.getAdapter();
-            adapter.setListEntries(videoEntries);
-            adapter.notifyDataSetChanged();
-            recyclerView.requestLayout();
+            if (videoEntries != null) {
+                recyclerView.setHasFixedSize(true);
+                PageAdapterForRecycler adapter = (PageAdapterForRecycler) recyclerView.getAdapter();
+                adapter.setListEntries(videoEntries);
+                adapter.notifyDataSetChanged();
+                recyclerView.requestLayout();
+            }
             dialog.cancel();
         }
     }
@@ -739,6 +779,91 @@ public class MainActivity extends AppCompatActivity {
 
             SoapObject resultRequestSOAP = (SoapObject) envelope.bodyIn;
             SoapObject root = (SoapObject) resultRequestSOAP.getProperty("SentListOfVideoResult");
+            int count = root.getPropertyCount();
+            for (int i = 0; i < count; i++) {
+                Object property = root.getProperty(i);
+                if (property instanceof SoapObject) {
+                    VideoEntry video = new VideoEntry();
+                    SoapObject category_list = (SoapObject) property;
+                    String postTitle = category_list.getProperty("PostTitle").toString();
+                    String videoId = category_list.getProperty("VideoId").toString();
+                    String hashTag1 = category_list.getProperty("Category1").toString();
+                    String hashTag2 = category_list.getProperty("Category2").toString();
+                    String hashTag3 = category_list.getProperty("Category3").toString();
+
+
+                    video.setPostTitle(postTitle);
+                    video.setVideoId(videoId);
+                    video.setHashTag1(hashTag1);
+                    video.setHashTag2(hashTag2);
+                    video.setHashTag3(hashTag3);
+                    videosList.add(video);
+                }
+
+            }
+            mainList = videosList;
+            List list = videosList.subList(0, 33);
+            return list;
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public List<VideoEntry> getVideosListWithHashTags(Set<String> interests) {
+        //Create request
+        SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.MULTIPLE_HASHTAGS_VIDEOS_METHOD_NAME);
+        //Property which holds input parameters
+
+        PropertyInfo userId = new PropertyInfo();
+        //Set Name
+        userId.setName("UserId");
+        //Set Value
+        userId.setValue(fbProfile.getFbUserId());
+        //Set dataType
+        userId.setType(String.class);
+        //Add the property to request object
+        String hashtags = "";
+        for (String interest : interests) {
+            hashtags += interest + ",";
+        }
+
+        //Property which holds input parameters
+        PropertyInfo hashtag = new PropertyInfo();
+        //Set Name
+        hashtag.setName("hashTag");
+        //Set Value
+        hashtag.setValue(hashtags);
+        //Set dataType
+        hashtag.setType(String.class);
+
+        request.addProperty(hashtag);
+        request.addProperty(userId);
+        //Create envelope
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+                SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        //Set output SOAP object
+        envelope.setOutputSoapObject(request);
+
+
+        //Create HTTP call object
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(Constants.MULTIPLE_HASHTAGS_VIDEOS_URL);
+
+        try {
+            //Invole web service
+            androidHttpTransport.call(Constants.MULTIPLE_HASHTAGS_VIDEOS_SOAP_ACTION, envelope);
+            //Get the response
+            //SoapObject response = (SoapObject) envelope.getResponse();
+            //Assign it to fahren static variable
+
+            List<VideoEntry> videosList = new ArrayList<VideoEntry>();
+
+            SoapObject resultRequestSOAP = (SoapObject) envelope.bodyIn;
+            SoapObject root = (SoapObject) resultRequestSOAP.getProperty("videoListWithMulipleHashTagResult");
             int count = root.getPropertyCount();
             for (int i = 0; i < count; i++) {
                 Object property = root.getProperty(i);
@@ -854,9 +979,8 @@ public class MainActivity extends AppCompatActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     private void showFullScreenVideo(String videoId) {
         String networkConstant = utility.connectedNetwork();
-        String userId =null;
-        if(fbProfile!=null)
-        {
+        String userId = null;
+        if (fbProfile != null) {
             userId = fbProfile.getFbUserId();
         }
        /* VideoViewBean videoViewBean = new VideoViewBean();
@@ -874,12 +998,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         intent.putExtra("VIDEO_ID", videoId);
-        if(mContext instanceof MainActivity)
-        {
+        if (mContext instanceof MainActivity) {
             ((MainActivity) mContext).startActivityForResult(intent, 10);
-        }
-        else
-        {
+        } else {
             ((HashTagActivity) mContext).startActivityForResult(intent, 10);
         }
 

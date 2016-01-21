@@ -31,6 +31,8 @@ import com.vis.beans.FbProfile;
 import com.vis.utilities.Constants;
 import com.vis.utilities.WebServiceUtility;
 
+import io.branch.referral.Branch;
+
 
 
 /*@ReportsCrashes(mailTo = "learndroid53@gmail.com",
@@ -53,6 +55,7 @@ public class Analytics extends Application {
 			GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
 			// To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
 			mTracker = analytics.newTracker(R.xml.global_tracker);
+			mTracker.enableAdvertisingIdCollection(true);
 		}
 		return mTracker;
 	}
@@ -70,7 +73,7 @@ public class Analytics extends Application {
 
 			}
 		});
-
+		Branch.getAutoInstance(this);
 
 		//ACRA.init(this);
 

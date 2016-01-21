@@ -19,6 +19,8 @@ public class Constants {
 
     public static final String PREFERENCES_ALREADY_RATED = "ALREADYRATED";
     public static final String PREFERENCES_SHOW_ALARM = "SHOWALARM";
+    public static final String PREFERENCES_INTEREST = "INTEREST";
+    public static final String PREFERENCES_SELECTED_INTERESTS = "PREFERENCES_SELECTED_INTERESTS";
 
 
     public static final String QUIZ_FEED_URL = "http://www.videoinshort.com/todays-picks";
@@ -88,6 +90,14 @@ public class Constants {
     public static final String HASHTAG_FOLLOW_UNFOLLOW_ACTION = "http://tempuri.org/SaveFollowUnfollowHashtag";
     public static final String HASHTAG_FOLLOW_UNFOLLOW_METHOD_NAME = "SaveFollowUnfollowHashtag";
 
+    public static final String INTEREST_LIST_URL = "http://service.videoinshort.com/savefbuserdata.asmx";
+    public static final String INTEREST_LIST_ACTION = "http://tempuri.org/IntrestList";
+    public static final String INTEREST_LIST_METHOD_NAME = "IntrestList";
+
+    public static final String MULTIPLE_HASHTAGS_VIDEOS_URL = "http://service.videoinshort.com/savefbuserdata.asmx";
+    public static final String MULTIPLE_HASHTAGS_VIDEOS_SOAP_ACTION = "http://tempuri.org/videoListWithMulipleHashTag";
+    public static final String MULTIPLE_HASHTAGS_VIDEOS_METHOD_NAME = "videoListWithMulipleHashTag";
+
 
     public static final String NAMESPACE = "http://tempuri.org/";
     public static final String MENU_SETTINGS = "menusettings";
@@ -103,8 +113,7 @@ public class Constants {
     public static final int SHARE_DATA = 8;
     public static final int FEEDBACK = 9 ;
     public static final int FOLLOW_UNFOLLOW = 10 ;
-    public static String SEND_REG_ID = "REGID";
-    public static String SEND_CONTACTS = "CONTACTS";
+    public static final int INTENT_REQUEST_CODE_FOR_INTEREST = 10 ;
 
     public static final String WATSAPP="w";
     public static final String FACEBOOK="f";
@@ -112,6 +121,7 @@ public class Constants {
 
     public static final String WIFI = "W";
     public static final String MOBILEDATA = "M";
+
 
 
 }
