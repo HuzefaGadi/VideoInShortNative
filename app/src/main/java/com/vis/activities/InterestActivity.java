@@ -58,7 +58,7 @@ public class InterestActivity extends AppCompatActivity {
                     }
                 }
                 editor.putStringSet(Constants.PREFERENCES_SELECTED_INTERESTS, selectedInterests).commit();
-                editor.putBoolean(Constants.PREFERENCES_INTEREST, false).commit();
+                editor.putBoolean(Constants.PREFERENCES_INTEREST, true).commit();
                 editor.apply();
                 finish();
             }
@@ -144,20 +144,27 @@ public class InterestActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<Interest> strings) {
             super.onPostExecute(strings);
-            if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
+            try
+            {
+                if (progressDialog != null && progressDialog.isShowing() ) {
+                    progressDialog.dismiss();
+                }
+                if (strings != null) {
+
+                    dataAdapter = new MyCustomAdapter(getApplicationContext(),
+                            R.layout.interest_info, strings);
+                    ListView listView = (ListView) findViewById(R.id.listView1);
+                    // Assign adapter to ListView
+                    listView.setAdapter(dataAdapter);
+                    listView.requestLayout();
+
+
+                }
+            }catch (Exception e)
+            {
+                e.printStackTrace();
             }
-            if (strings != null) {
 
-                dataAdapter = new MyCustomAdapter(getApplicationContext(),
-                        R.layout.interest_info, strings);
-                ListView listView = (ListView) findViewById(R.id.listView1);
-                // Assign adapter to ListView
-                listView.setAdapter(dataAdapter);
-                listView.requestLayout();
-
-
-            }
         }
     }
 }

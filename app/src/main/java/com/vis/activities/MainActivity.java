@@ -623,7 +623,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (id == R.id.action_interest) {
             Intent intent = new Intent(this, InterestActivity.class);
             intent.putExtra(Constants.MENU_SETTINGS, true);
-            startActivity(intent);
+            startActivityForResult(intent,Constants.INTENT_REQUEST_CODE_FOR_INTEREST);
             return true;
         }
 
@@ -802,7 +802,16 @@ public class MainActivity extends AppCompatActivity {
 
             }
             mainList = videosList;
-            List list = videosList.subList(0, 33);
+            List list;
+            if(videosList.size()>=33)
+            {
+                list = videosList.subList(0, 33);
+            }
+            else
+            {
+                list= videosList;
+            }
+
             return list;
 
 
@@ -830,7 +839,7 @@ public class MainActivity extends AppCompatActivity {
         for (String interest : interests) {
             hashtags += interest + ",";
         }
-
+        hashtags = hashtags.substring(0,hashtags.length()-1);
         //Property which holds input parameters
         PropertyInfo hashtag = new PropertyInfo();
         //Set Name
@@ -887,7 +896,16 @@ public class MainActivity extends AppCompatActivity {
 
             }
             mainList = videosList;
-            List list = videosList.subList(0, 33);
+            List list;
+            if(videosList.size() >=33)
+            {
+               list = videosList.subList(0, 33);
+            }
+            else
+            {
+                list = videosList;
+            }
+
             return list;
 
 

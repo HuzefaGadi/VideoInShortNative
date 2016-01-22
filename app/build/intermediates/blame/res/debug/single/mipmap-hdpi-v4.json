@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\ic_twitter.png",
+        "source": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\src\\main\\res\\mipmap-hdpi\\ic_twitter.png"
+    },
+    {
+        "merged": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\ic_watsapp.png",
+        "source": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\src\\main\\res\\mipmap-hdpi\\ic_watsapp.png"
+    },
+    {
+        "merged": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\ic_launcher.png",
+        "source": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi-v4\\ic_fb_icon.png",
+        "source": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\src\\main\\res\\mipmap-hdpi\\ic_fb_icon.png"
+    }
+]

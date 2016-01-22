@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\build\\intermediates\\res\\merged\\debug\\menu\\menu_feedback.xml",
+        "source": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\src\\main\\res\\menu\\menu_feedback.xml"
+    },
+    {
+        "merged": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\build\\intermediates\\res\\merged\\debug\\menu\\main.xml",
+        "source": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\src\\main\\res\\menu\\main.xml"
+    },
+    {
+        "merged": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\build\\intermediates\\res\\merged\\debug\\menu\\menu_hash_tag.xml",
+        "source": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\src\\main\\res\\menu\\menu_hash_tag.xml"
+    },
+    {
+        "merged": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\build\\intermediates\\res\\merged\\debug\\menu\\menu_show_video_in_iframe.xml",
+        "source": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\src\\main\\res\\menu\\menu_show_video_in_iframe.xml"
+    },
+    {
+        "merged": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\build\\intermediates\\res\\merged\\debug\\menu\\menu_facebook.xml",
+        "source": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\src\\main\\res\\menu\\menu_facebook.xml"
+    }
+]

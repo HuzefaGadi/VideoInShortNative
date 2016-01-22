@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi-v4\\ic_fb_icon.png",
+        "source": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\src\\main\\res\\mipmap-xhdpi\\ic_fb_icon.png"
+    },
+    {
+        "merged": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi-v4\\ic_launcher.png",
+        "source": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi-v4\\ic_watsapp.png",
+        "source": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\src\\main\\res\\mipmap-xhdpi\\ic_watsapp.png"
+    },
+    {
+        "merged": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi-v4\\ic_twitter.png",
+        "source": "C:\\Users\\huzefaasger\\StudioProjects\\VideoInShortNative\\app\\src\\main\\res\\mipmap-xhdpi\\ic_twitter.png"
+    }
+]
