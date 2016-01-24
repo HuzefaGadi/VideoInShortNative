@@ -53,8 +53,11 @@ import com.facebook.FacebookSdk;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -88,8 +91,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import io.branch.referral.Branch;
-import io.branch.referral.BranchError;
 
 /**
  * A sample Activity showing how to manage multiple YouTubeThumbnailViews in an adapter for display
@@ -124,6 +125,11 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayoutManager mLayoutManager;
     private Toolbar mToolbar;
     private List<VideoEntry> mainList;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -257,6 +263,9 @@ public class MainActivity extends AppCompatActivity {
 
         onDeepLinkIntent(getIntent());
         //  new WebServiceUtility(this,Constants.GET_VIDEOS,null);
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
 
@@ -362,15 +371,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void onDeepLinkIntent(Intent intent) {
-       /* String action = intent.getAction();
+        String action = intent.getAction();
         String data = intent.getDataString();
         if (Intent.ACTION_VIEW.equals(action) && data != null) {
             String videoId = data.substring(data.lastIndexOf("/") + 1);
 
             showFullScreenVideo(videoId);
-        }*/
+        }
 
-        Branch branch = Branch.getInstance();
+       /* Branch branch = Branch.getInstance();
         branch.initSession(new Branch.BranchReferralInitListener() {
             @Override
             public void onInitFinished(JSONObject referringParams, BranchError error) {
@@ -379,7 +388,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("BranchConfigTest", "deep link data: " + referringParams.toString());
                 }
             }
-        }, intent.getData(), this);
+        }, intent.getData(), this);*/
     }
 
     void processIntent(Intent intent) {
@@ -449,6 +458,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         // TODO Auto-generated method stub
         super.onStart();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
 
         System.out.println("TRANSITION ONSTART");
         SharedPreferences pref = getPreferences(this);
@@ -457,6 +469,19 @@ public class MainActivity extends AppCompatActivity {
         }
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
         registerReceiver(broadcast_reciever, new IntentFilter("finish_activity"));
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Video in short", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://videoinshort.com"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.vis.activities/http/videoinshort.com/video")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
     }
 
 
@@ -464,9 +489,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         // TODO Auto-generated method stub
         super.onStop();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Video in short", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://videoinshort.com"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.vis.activities/http/videoinshort.com/video")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
         GoogleAnalytics.getInstance(this).reportActivityStop(this);
         unregisterReceiver(broadcast_reciever);
         System.out.println("TRANSITION ONSTOP");
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.disconnect();
     }
 
     private void rateUs(String message) {
@@ -623,7 +664,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (id == R.id.action_interest) {
             Intent intent = new Intent(this, InterestActivity.class);
             intent.putExtra(Constants.MENU_SETTINGS, true);
-            startActivityForResult(intent,Constants.INTENT_REQUEST_CODE_FOR_INTEREST);
+            startActivityForResult(intent, Constants.INTENT_REQUEST_CODE_FOR_INTEREST);
             return true;
         }
 
@@ -803,13 +844,10 @@ public class MainActivity extends AppCompatActivity {
             }
             mainList = videosList;
             List list;
-            if(videosList.size()>=33)
-            {
+            if (videosList.size() >= 33) {
                 list = videosList.subList(0, 33);
-            }
-            else
-            {
-                list= videosList;
+            } else {
+                list = videosList;
             }
 
             return list;
@@ -839,7 +877,7 @@ public class MainActivity extends AppCompatActivity {
         for (String interest : interests) {
             hashtags += interest + ",";
         }
-        hashtags = hashtags.substring(0,hashtags.length()-1);
+        hashtags = hashtags.substring(0, hashtags.length() - 1);
         //Property which holds input parameters
         PropertyInfo hashtag = new PropertyInfo();
         //Set Name
@@ -897,12 +935,9 @@ public class MainActivity extends AppCompatActivity {
             }
             mainList = videosList;
             List list;
-            if(videosList.size() >=33)
-            {
-               list = videosList.subList(0, 33);
-            }
-            else
-            {
+            if (videosList.size() >= 33) {
+                list = videosList.subList(0, 33);
+            } else {
                 list = videosList;
             }
 

@@ -31,7 +31,6 @@ import com.vis.beans.FbProfile;
 import com.vis.utilities.Constants;
 import com.vis.utilities.WebServiceUtility;
 
-import io.branch.referral.Branch;
 
 
 
@@ -73,7 +72,7 @@ public class Analytics extends Application {
 
 			}
 		});
-		Branch.getAutoInstance(this);
+	//	Branch.getAutoInstance(this);
 
 		//ACRA.init(this);
 

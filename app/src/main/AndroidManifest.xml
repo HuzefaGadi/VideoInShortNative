@@ -107,9 +107,9 @@
 
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
 
-        <meta-data
+        <!--<meta-data
             android:name="io.branch.sdk.BranchKey"
-            android:value="key_test_ijg6mnlfYVVfO4MlqKiq8kbdwtabqlYH" />
+            android:value="key_test_ijg6mnlfYVVfO4MlqKiq8kbdwtabqlYH" />-->
 
         <activity
             android:name=".activities.MainActivity"
@@ -119,17 +119,17 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter android:label="@string/app_name">
 
-                <!--
+
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                &lt;!&ndash; Accepts URIs that begin with "http://recipe-app.com/recipe" &ndash;&gt;
+
                 <data android:scheme="http"
                     android:host="videoinshort.com"
                     android:pathPrefix="/video" />
-                -->
 
-                <data
+
+                <!--<data
                     android:host="open"
                     android:scheme="vint" />
 
@@ -141,9 +141,9 @@
                 <data
                     android:host="videoinshort.com"
                     android:pathPrefix="/video"
-                    android:scheme="http" />
+                    android:scheme="http" />-->
             </intent-filter>
-        </activity>
+          </activity>
         <activity
             android:name=".activities.ShowVideoActivity"
             android:screenOrientation="landscape"
