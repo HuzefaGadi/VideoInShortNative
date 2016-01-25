@@ -221,8 +221,8 @@ public class MainActivity extends AppCompatActivity {
         if (utility.checkInternetConnectivity()) {
             listViewContainer.setVisibility(View.VISIBLE);
             noInternetMessage.setVisibility(View.GONE);
-
-            if (prefs.getBoolean(Constants.PREFERENCES_INTEREST, false)) {
+            boolean isFirstTime = prefs.getBoolean(Constants.PREFERENCES_INTEREST, true);
+            if (!isFirstTime) {
                 loadListView();
             } else {
                 Intent intent = new Intent(this, InterestActivity.class);

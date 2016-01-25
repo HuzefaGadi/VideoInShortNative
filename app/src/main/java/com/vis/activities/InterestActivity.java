@@ -58,8 +58,8 @@ public class InterestActivity extends AppCompatActivity {
                     }
                 }
                 editor.putStringSet(Constants.PREFERENCES_SELECTED_INTERESTS, selectedInterests).commit();
-                editor.putBoolean(Constants.PREFERENCES_INTEREST, true).commit();
-                editor.apply();
+                editor.putBoolean(Constants.PREFERENCES_INTEREST, false).commit();
+
                 finish();
             }
         });

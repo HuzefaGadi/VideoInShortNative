@@ -89,14 +89,10 @@ public class HashTagActivity extends AppCompatActivity {
 
     private static final int RECOVERY_DIALOG_REQUEST = 1;
     private RecyclerView recyclerView;
-    String SENDER_ID = "995587742942";
-    private boolean isFullscreen;
-    GoogleCloudMessaging gcm;
-    AtomicInteger msgId = new AtomicInteger();
-    private PendingIntent pendingIntent;
+
     RelativeLayout noInternetMessage, listViewContainer;
     Context mContext;
-    String regid;
+
     Button refreshButton;
     Utility utility;
     FbProfile fbProfile;
@@ -183,15 +179,9 @@ public class HashTagActivity extends AppCompatActivity {
 
 
         if (checkPlayServices()) {
-            gcm = GoogleCloudMessaging.getInstance(this);
-            regid = getRegistrationId(mContext);
-
-            if (regid.isEmpty()) {
-                registerInBackground();
-            } else {
 
                 checkYouTubeApi();
-            }
+
         } else {
             Log.i(Constants.TAG, "No valid Google Play Services APK found.");
         }
@@ -295,26 +285,8 @@ public class HashTagActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-        processIntent(getIntent());
-    }
 
-    void processIntent(Intent intent) {
-        String notification = intent.getStringExtra("NOTIFICATION");
-        if (notification != null && !notification.isEmpty()) {
-            String regId = getRegistrationId(mContext);
-            new WebServiceUtility(this, Constants.CLICK_INFO_TASK, notification);
-            AppActive appActive = new AppActive();
-            appActive.setRegId(regId);
-            appActive.setNetworkConstant(utility.connectedNetwork());
-            new WebServiceUtility(getApplicationContext(), Constants.SEND_APP_ACTIVE_DATA, appActive);
-        }
-        onRefresh();
 
-    }
 
     public void onRefresh() {
 
@@ -402,97 +374,6 @@ public class HashTagActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * Stores the registration ID and the app versionCode in the application's
-     * {@code SharedPreferences}.
-     *
-     * @param context application's context.
-     * @param regId   registration ID
-     */
-    private void storeRegistrationId(Context context, String regId) {
-        final SharedPreferences prefs = getPreferences(context);
-        int appVersion = getAppVersion(context);
-        Log.i(Constants.TAG, "Saving regId on app version " + appVersion);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(Constants.PROPERTY_REG_ID, regId);
-        editor.putInt(Constants.PROPERTY_APP_VERSION, appVersion);
-        editor.commit();
-    }
-
-    /**
-     * Gets the current registration ID for application on GCM service, if there is one.
-     * <p/>
-     * If result is empty, the app needs to register.
-     *
-     * @return registration ID, or empty string if there is no existing
-     * registration ID.
-     */
-    private String getRegistrationId(Context context) {
-        final SharedPreferences prefs = getPreferences(context);
-        String registrationId = prefs.getString(Constants.PROPERTY_REG_ID, "");
-        if (registrationId.isEmpty()) {
-            Log.i(Constants.TAG, "Registration not found.");
-            return "";
-        }
-        // Check if app was updated; if so, it must clear the registration ID
-        // since the existing regID is not guaranteed to work with the new
-        // app version.
-        int registeredVersion = prefs.getInt(Constants.PROPERTY_APP_VERSION, Integer.MIN_VALUE);
-        int currentVersion = getAppVersion(context);
-        if (registeredVersion != currentVersion) {
-            Log.i(Constants.TAG, "App version changed.");
-            return "";
-        }
-        return registrationId;
-    }
-
-
-    /**
-     * Registers the application with GCM servers asynchronously.
-     * <p/>
-     * Stores the registration ID and the app versionCode in the application's
-     * shared preferences.
-     */
-    private void registerInBackground() {
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                String msg = "";
-                try {
-                    if (gcm == null) {
-                        gcm = GoogleCloudMessaging.getInstance(mContext);
-                    }
-                    regid = gcm.register(SENDER_ID);
-                    msg = "Device registered, registration ID=" + regid;
-
-                    // You should send the registration ID to your server over HTTP, so it
-                    // can use GCM/HTTP or CCS to send messages to your app.
-                    //  sendRegistrationIdToBackend();
-
-                    // For this demo: we don't need to send it because the device will send
-                    // upstream messages to a server that echo back the message using the
-                    // 'from' address in the message.
-
-                    // Persist the regID - no need to register again.
-                    storeRegistrationId(mContext, regid);
-                } catch (IOException ex) {
-                    msg = "Error :" + ex.getMessage();
-                    // If there is an error, don't just keep trying to register.
-                    // Require the user to click a button again, or perform
-                    // exponential back-off.
-                }
-                return msg;
-            }
-
-            @Override
-            protected void onPostExecute(String msg) {
-                // mDisplay.append(msg + "\n");
-
-                checkYouTubeApi();
-            }
-        }.execute(null, null, null);
-    }
-
 
     @Override
     protected void onResume() {
@@ -531,29 +412,34 @@ public class HashTagActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<VideoEntry> videoEntries) {
             super.onPostExecute(videoEntries);
-            // VIDEO_LIST = videoEntries;
-            /*adapter = new PageAdapter(mContext, videoEntries, fbProfile);
-            recyclerView.setAdapter(adapter);
-            recyclerView.requestLayout();*/
-            //  setListViewHeightBasedOnItems(recyclerView);
-
-
-            // use a linear layout manager
-            recyclerView.setHasFixedSize(true);
-            if (videoEntries != null) {
-                PageAdapterForRecycler adapter = (PageAdapterForRecycler) recyclerView.getAdapter();
-                adapter.setListEntries(videoEntries);
-                adapter.notifyDataSetChanged();
-                recyclerView.requestLayout();
-                if (isHashTagFollowing) {
-                    followUnFollow.setText("UNFOLLOW");
-                } else {
-                    followUnFollow.setText("FOLLOW");
+            try
+            {
+                recyclerView.setHasFixedSize(true);
+                if (videoEntries != null) {
+                    PageAdapterForRecycler adapter = (PageAdapterForRecycler) recyclerView.getAdapter();
+                    adapter.setListEntries(videoEntries);
+                    adapter.notifyDataSetChanged();
+                    recyclerView.requestLayout();
+                    if (isHashTagFollowing) {
+                        followUnFollow.setText("UNFOLLOW");
+                    } else {
+                        followUnFollow.setText("FOLLOW");
+                    }
                 }
+
+
+            }catch(Exception e)
+            {
+                e.printStackTrace();
             }
 
-            if (dialog != null && dialog.isShowing()) {
-                dialog.cancel();
+            try{
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.cancel();
+                }
+            }catch(Exception e)
+            {
+                e.printStackTrace();
             }
 
         }
