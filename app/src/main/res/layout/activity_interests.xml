@@ -23,25 +23,30 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
         android:weightSum="2">
 
 
         <Button
-            android:layout_weight="1"
-            android:layout_marginRight="30dp"
             android:id="@+id/cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/custom_button_for_white_background"
             android:text="Cancel"
+            android:textColor="#ffffff"
 
             />
 
         <Button
-            android:layout_weight="1"
             android:id="@+id/submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Submit" />
+            android:layout_weight="1"
+            android:background="@drawable/custom_button_for_white_background"
+            android:text="Submit"
+            android:textColor="#ffffff" />
     </LinearLayout>
 
 

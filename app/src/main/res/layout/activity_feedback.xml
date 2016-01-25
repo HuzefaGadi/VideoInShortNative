@@ -70,8 +70,10 @@
             android:layout_weight="1"
             android:layout_marginRight="30dp"
             android:id="@+id/cancel"
+            android:background="@drawable/custom_button_for_white_background"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="#ffffff"
             android:text="Cancel"
 
             />
@@ -79,6 +81,8 @@
         <Button
             android:layout_weight="1"
             android:id="@+id/submit"
+            android:textColor="#ffffff"
+            android:background="@drawable/custom_button_for_white_background"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Submit" />

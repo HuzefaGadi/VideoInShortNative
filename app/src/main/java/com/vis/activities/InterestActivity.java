@@ -40,7 +40,7 @@ public class InterestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_preferences);
+        setContentView(R.layout.activity_interests);
         mainList = new ArrayList<Interest>();
         preferences = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
         editor = preferences.edit();

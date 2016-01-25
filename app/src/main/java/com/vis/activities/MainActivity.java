@@ -55,6 +55,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -125,6 +126,9 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayoutManager mLayoutManager;
     private Toolbar mToolbar;
     private List<VideoEntry> mainList;
+    private Uri mUrl;
+    private String mTitle;
+    private String mDescription;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -137,6 +141,9 @@ public class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.video_list_demo);
 
+        mUrl = Uri.parse("http://videoinshort.com/video");
+        mTitle = "Video In Short";
+        mDescription = "Funny videos App";
         utility = new Utility(this);
 
         noInternetMessage = (RelativeLayout) findViewById(R.id.no_internet_message);
@@ -268,6 +275,18 @@ public class MainActivity extends AppCompatActivity {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
+    public Action getAction() {
+        Thing object = new Thing.Builder()
+                .setName(mTitle)
+                .setDescription(mDescription)
+                .setUrl(mUrl)
+                .build();
+
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
 
     private void initToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -471,7 +490,7 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(broadcast_reciever, new IntentFilter("finish_activity"));
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
+        /*Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
                 "Video in short", // TODO: Define a title for the content shown.
                 // TODO: If you have web page content that matches this app activity's content,
@@ -481,7 +500,8 @@ public class MainActivity extends AppCompatActivity {
                 // TODO: Make sure this auto-generated app deep link URI is correct.
                 Uri.parse("android-app://com.vis.activities/http/videoinshort.com/video")
         );
-        AppIndex.AppIndexApi.start(client, viewAction);
+        AppIndex.AppIndexApi.start(client, viewAction);*/
+        AppIndex.AppIndexApi.start(client, getAction());
     }
 
 
@@ -491,7 +511,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
+       /* Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
                 "Video in short", // TODO: Define a title for the content shown.
                 // TODO: If you have web page content that matches this app activity's content,
@@ -501,7 +521,8 @@ public class MainActivity extends AppCompatActivity {
                 // TODO: Make sure this auto-generated app deep link URI is correct.
                 Uri.parse("android-app://com.vis.activities/http/videoinshort.com/video")
         );
-        AppIndex.AppIndexApi.end(client, viewAction);
+        AppIndex.AppIndexApi.end(client, viewAction);*/
+        AppIndex.AppIndexApi.end(client, getAction());
         GoogleAnalytics.getInstance(this).reportActivityStop(this);
         unregisterReceiver(broadcast_reciever);
         System.out.println("TRANSITION ONSTOP");
