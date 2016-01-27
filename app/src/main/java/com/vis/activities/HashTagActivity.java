@@ -302,30 +302,6 @@ public class HashTagActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * @return Application's version code from the {@code PackageManager}.
-     */
-    private static int getAppVersion(Context context) {
-        try {
-            PackageInfo packageInfo = context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0);
-            return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            throw new RuntimeException("Could not get package name: " + e);
-        }
-    }
-
-    private static String getAppVersionName(Context context) {
-        try {
-            PackageInfo packageInfo = context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0);
-            return packageInfo.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            throw new RuntimeException("Could not get package name: " + e);
-        }
-    }
 
     /**
      * @return Application's {@code SharedPreferences}.
@@ -539,82 +515,10 @@ public class HashTagActivity extends AppCompatActivity {
         return null;
     }
 
-    private void checkForAppUpdateApp(String appVer) {
-        new AsyncTask<String, Void, String>() {
-            @Override
-            protected String doInBackground(String... params) {
-                SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.VERSION_METHOD_NAME);
-
-                PropertyInfo appVersion = new PropertyInfo();
-                appVersion.setName("appVersion");
-                appVersion.setValue(params[0]);
-                appVersion.setType(String.class);
-
-                request.addProperty(appVersion);
-
-                SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
-                        SoapEnvelope.VER11);
-                envelope.dotNet = true;
-                envelope.setOutputSoapObject(request);
-                HttpTransportSE androidHttpTransport = new HttpTransportSE(Constants.VERSION_URL);
-
-                try {
-                    //Invole web service
-                    androidHttpTransport.call(Constants.VERSION_SOAP_ACTION, envelope);
-                    //Get the response
-                    SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
-                    //Assign it to fahren static variable
-                    String responseFromService = response.toString();
-
-                    System.out.println("Response For Get App version " + responseFromService);
-                    return responseFromService;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(String result) {
-                if (result != null) {
-                    if (result.equals("1")) {
-                        showUpdateMessage("Update your App!!");
-                    }
-                }
-            }
-        }.execute(appVer);
-
-    }
 
 
-    private void showUpdateMessage(String message) {
 
-        Tracker t = ((Analytics) mContext.getApplicationContext()).getDefaultTracker();
-        t.enableAdvertisingIdCollection(true);
-        // Build and send an Event.
-        t.send(new HitBuilders.EventBuilder()
-                .setCategory("Alert View")
-                .setAction("Rate Us")
-                .setLabel("Rate Us called")
-                .build());
 
-        AlertDialog.Builder dialog = new AlertDialog.Builder(HashTagActivity.this);
-        t.enableAdvertisingIdCollection(true);
-        dialog.setTitle("Update Available!!")
-                .setIcon(R.mipmap.ic_launcher)
-                .setMessage(message)
-                .setNegativeButton("Later", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialoginterface, int i) {
-                        dialoginterface.cancel();
-                    }
-                })
-                .setPositiveButton("Now", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialoginterface, int i) {
-                        mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + mContext.getApplicationContext().getPackageName())));
-                    }
-                }).show();
-
-    }
 
 
 }

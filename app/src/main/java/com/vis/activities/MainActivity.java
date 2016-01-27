@@ -179,9 +179,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        if (prefs.getBoolean("ALARM_SET", false)) {
-
-        } else {
+        boolean alarmAlreadySet = prefs.getBoolean("ALARM_SET", false);
+        if (!alarmAlreadySet) {
             Intent alarmIntent = new Intent(MainActivity.this, AlarmReceiver.class);
             pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, alarmIntent, 0);
 
@@ -226,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
                 loadListView();
             } else {
                 Intent intent = new Intent(this, InterestActivity.class);
-                startActivityForResult(intent, Constants.INTENT_REQUEST_CODE_FOR_INTEREST);
+                startActivityForResult(intent, Constants.REQUEST_CODE_FOR_INTEREST);
             }
 
             // mainWebView.loadUrl(Constants.url);
@@ -355,7 +354,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == RECOVERY_DIALOG_REQUEST) {
             // Recreate the activity if user performed a recovery action
             recreate();
-        } else if (requestCode == Constants.INTENT_REQUEST_CODE_FOR_INTEREST) {
+        } else if (requestCode == Constants.REQUEST_CODE_FOR_INTEREST) {
             loadListView();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -483,7 +482,9 @@ public class MainActivity extends AppCompatActivity {
 
         System.out.println("TRANSITION ONSTART");
         SharedPreferences pref = getPreferences(this);
-        if (pref.getBoolean(Constants.PREFERENCES_SHOW_ALARM, false) && !pref.getBoolean(Constants.PREFERENCES_ALREADY_RATED, false)) {
+        boolean showAlarm = pref.getBoolean(Constants.PREFERENCES_SHOW_ALARM, false);
+        boolean alreadyRated = pref.getBoolean(Constants.PREFERENCES_ALREADY_RATED, false);
+        if ( showAlarm && !alreadyRated) {
             rateUs("You are awesome! If you feel the same about VideoInShort, please take a moment to rate it.");
         }
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
@@ -559,7 +560,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getApplicationContext().getPackageName())));
                 editor.putBoolean(Constants.PREFERENCES_SHOW_ALARM, false).commit();
                 editor.putBoolean(Constants.PREFERENCES_ALREADY_RATED, true).commit();
-                editor.apply();
+
 
             }
         });
@@ -570,7 +571,7 @@ public class MainActivity extends AppCompatActivity {
 
                 dialog.cancel();
                 editor.putBoolean(Constants.PREFERENCES_SHOW_ALARM, false).commit();
-                editor.apply();
+
 
             }
         });
@@ -582,7 +583,7 @@ public class MainActivity extends AppCompatActivity {
                 dialog.cancel();
                 editor.putBoolean(Constants.PREFERENCES_SHOW_ALARM, false).commit();
                 editor.putBoolean(Constants.PREFERENCES_ALREADY_RATED, true).commit();
-                editor.apply();
+
 
             }
         });
@@ -685,7 +686,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (id == R.id.action_interest) {
             Intent intent = new Intent(this, InterestActivity.class);
             intent.putExtra(Constants.MENU_SETTINGS, true);
-            startActivityForResult(intent, Constants.INTENT_REQUEST_CODE_FOR_INTEREST);
+            startActivityForResult(intent, Constants.REQUEST_CODE_FOR_INTEREST);
             return true;
         }
 
@@ -1028,8 +1029,8 @@ public class MainActivity extends AppCompatActivity {
         // Build and send an Event.
         t.send(new HitBuilders.EventBuilder()
                 .setCategory("Alert View")
-                .setAction("Rate Us")
-                .setLabel("Rate Us called")
+                .setAction("Update Available")
+                .setLabel("Update Available called")
                 .build());
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);

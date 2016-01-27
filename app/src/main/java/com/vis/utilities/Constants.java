@@ -113,7 +113,8 @@ public class Constants {
     public static final int SHARE_DATA = 8;
     public static final int FEEDBACK = 9 ;
     public static final int FOLLOW_UNFOLLOW = 10 ;
-    public static final int INTENT_REQUEST_CODE_FOR_INTEREST = 10 ;
+    public static final int REQUEST_CODE_FOR_INTEREST = 10 ;
+    public static final int REQUEST_CODE_FOR_SHOW_FULLSCREEN_VIDEO= 11 ;
 
     public static final String WATSAPP="w";
     public static final String FACEBOOK="f";

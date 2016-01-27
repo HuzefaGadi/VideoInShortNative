@@ -278,12 +278,38 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
                     return false;
                 }
             });*/
-            view.hashTag1.setText(entry.getHashTag1());
-            view.hashTag2.setText(entry.getHashTag2());
-            view.hashTag3.setText(entry.getHashTag3());
-            view.hashTag1.setTag(entry.getHashTag1());
-            view.hashTag2.setTag(entry.getHashTag2());
-            view.hashTag3.setTag(entry.getHashTag3());
+
+            if(entry.getHashTag1()!=null && !entry.getHashTag1().isEmpty() && !entry.getHashTag1().trim().equalsIgnoreCase("anyType{}")) {
+                view.hashTag1.setText(entry.getHashTag1());
+                view.hashTag1.setTag(entry.getHashTag1());
+                view.hashTag1.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                view.hashTag1.setVisibility(View.GONE);
+            }
+            if(entry.getHashTag2()!=null && !entry.getHashTag2().isEmpty() && !entry.getHashTag2().trim().equalsIgnoreCase("anyType{}"))
+            {
+                view.hashTag2.setText(entry.getHashTag2());
+                view.hashTag2.setTag(entry.getHashTag2());
+                view.hashTag2.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                view.hashTag2.setVisibility(View.GONE);
+            }
+            if(entry.getHashTag3()!=null && !entry.getHashTag3().isEmpty() && !entry.getHashTag3().trim().equalsIgnoreCase("anyType{}"))
+            {
+                view.hashTag3.setText(entry.getHashTag3());
+                view.hashTag3.setTag(entry.getHashTag3());
+                view.hashTag3.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                view.hashTag3.setVisibility(View.GONE);
+            }
+
+
 
             view.hashTag1.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -309,7 +335,6 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(mContext, HashTagActivity.class);
-
                     intent.putExtra(Constants.HASHTAG, String.valueOf(view.getTag()));
                     mContext.startActivity(intent);
                 }
@@ -580,11 +605,11 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
         intent.putExtra("VIDEO_ID", videoId);
         if(mContext instanceof MainActivity)
         {
-            ((MainActivity) mContext).startActivityForResult(intent, 10);
+            ((MainActivity) mContext).startActivityForResult(intent, Constants.REQUEST_CODE_FOR_SHOW_FULLSCREEN_VIDEO);
         }
         else
         {
-            ((HashTagActivity) mContext).startActivityForResult(intent, 10);
+            ((HashTagActivity) mContext).startActivityForResult(intent, Constants.REQUEST_CODE_FOR_SHOW_FULLSCREEN_VIDEO);
         }
 
     }
