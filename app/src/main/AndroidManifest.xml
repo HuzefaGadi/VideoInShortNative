@@ -172,6 +172,7 @@
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".activities.InterestActivity"
+            android:screenOrientation="landscape"
             android:label="@string/interest_activity"></activity>
     </application>
 

@@ -4,7 +4,7 @@
         android:radius="14dp"
         />
     <solid
-        android:color="#cbdaf0"
+        android:color="@color/toolbarcolor_light"
         />
     <padding
         android:left="15dp"

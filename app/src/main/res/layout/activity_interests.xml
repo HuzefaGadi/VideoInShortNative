@@ -10,12 +10,25 @@
     tools:context=".activities.InterestActivity">
 
 
-    <ListView
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/table_layout"
+        android:stretchColumns="*"
+
+        android:orientation="vertical"
+        android:dividerPadding="20dp"
+        android:layout_alignParentTop="true">
+
+
+    </TableLayout>
+
+    <!--<ListView
         android:id="@+id/listView1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@+id/button_layout"
-        android:divider="@null" />
+        android:divider="@null" />-->
 
     <LinearLayout
         android:id="@+id/button_layout"

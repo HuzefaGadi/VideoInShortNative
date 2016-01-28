@@ -1,57 +1,60 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/splash_background"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@color/toolbarcolor"
-    tools:context=".MainFragment">
+    android:paddingTop="@dimen/activity_vertical_margin">
 
 
     <ImageView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/login_button"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="100dp"
-        android:id="@+id/imageView"
-        android:scaleType="centerInside"
-        android:adjustViewBounds="true"
-        android:background="@null"
-        android:src="@drawable/logo"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
-        android:layout_centerHorizontal="true" />
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:scaleType="centerInside"
+        android:src="@drawable/logo" />
 
 
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
 
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/login_button"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/terms"
-            android:layout_marginBottom="100dp"
-            android:textSize="15dp"
-            android:layout_marginRight="40dp"
-            android:layout_marginLeft="40dp"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"/>
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp"
+        android:textSize="15dp" />
 
 
     <TextView
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:textSize="12dip"
-        android:textColor="#FFFFFF"
+        android:id="@+id/terms"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
-        android:id="@+id/terms"
-        android:text="@string/terms"/>
+        android:gravity="center"
+        android:text="@string/terms"
+        android:textColor="#FFFFFF"
+        android:textSize="12dip" />
 
-
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView2"
+        android:layout_above="@+id/login_button"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/tagline" />
 
 
 </RelativeLayout>

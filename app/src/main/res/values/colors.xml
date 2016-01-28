@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="statusbarcolor">#5280a2</color>
+    <color name="statusbarcolor">#4cc8a1</color>
+    <color name="toolbarcolor">#1FDBAF</color>
+    <color name="toolbarcolor_light">#591fdbaf</color>
+    <color name="textcolor">#1FDBAF</color>
+    <color name="textcolorlight">#e25b5b5b</color>
+    <color name="hashtag_color">#1FDBAF</color>
+    <color name="card_background">#ffffff</color>
+    <color name="recyclerview_dark">#dedddd</color>
+
+
+    <!--<color name="statusbarcolor">#5280a2</color>
     <color name="toolbarcolor">#5280a2</color>
     <color name="textcolor">#5280a2</color>
     <color name="textcolorlight">#e2adadad</color>
     <color name="hashtag_color">#278eff</color>
+    <color name="card_background">#eceae3</color>-->
 
 
 </resources>
