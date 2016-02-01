@@ -19,11 +19,14 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.vis.R;
+import com.vis.beans.FbProfile;
 import com.vis.beans.Interest;
 import com.vis.utilities.Constants;
 
 import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
@@ -41,6 +44,7 @@ public class InterestActivity extends AppCompatActivity {
     MyCustomAdapter dataAdapter;
     SharedPreferences.Editor editor;
     TableLayout tableLayout;
+    FbProfile fbProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +53,20 @@ public class InterestActivity extends AppCompatActivity {
         mainList = new ArrayList<Interest>();
         preferences = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
         editor = preferences.edit();
-        new CallWebservice().execute();
+
         Button submit = (Button) findViewById(R.id.submit);
         Button cancel = (Button) findViewById(R.id.cancel);
         tableLayout = (TableLayout) findViewById(R.id.table_layout);
+        String responseFromFb = getIntent().getStringExtra(Constants.FB_USER_INFO);
+        if (responseFromFb != null && !responseFromFb.isEmpty()) {
+            fbProfile = new Gson().fromJson(responseFromFb, FbProfile.class);
+        } else {
+            String responseFromDb = preferences.getString(Constants.FB_USER_INFO, null);
+            if (responseFromDb != null && !responseFromDb.isEmpty()) {
+                fbProfile = new Gson().fromJson(responseFromDb, FbProfile.class);
+            }
+        }
+        new CallWebservice().execute();
         selectedInterests = new HashSet<>();
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +85,17 @@ public class InterestActivity extends AppCompatActivity {
             }
         });
 
+        boolean isFirstTime = preferences.getBoolean(Constants.PREFERENCES_INTEREST, true);
+        if(isFirstTime)
+        {
+            cancel.setVisibility(View.GONE);
+            submit.setText("Lets Get Started");
+        }
+        else
+        {
+            submit.setText("Save");
+            cancel.setVisibility(View.VISIBLE);
+        }
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -97,7 +122,7 @@ public class InterestActivity extends AppCompatActivity {
         }
 
         @Override
-        protected List<Interest> doInBackground(Void... voids) {
+        protected List<Interest> doInBackground(Void... voids) {/*
 
             boolean isFirstTime = preferences.getBoolean(Constants.PREFERENCES_INTEREST, true);
 
@@ -120,6 +145,57 @@ public class InterestActivity extends AppCompatActivity {
                 androidHttpTransport.call(Constants.INTEREST_LIST_ACTION, envelope);
                 SoapObject resultRequestSOAP = (SoapObject) envelope.bodyIn;
                 SoapObject root = (SoapObject) resultRequestSOAP.getProperty("IntrestListResult");
+                int count = root.getPropertyCount();
+                for (int i = 0; i < count; i++) {
+                    Object property = root.getProperty(i);
+                    Interest interest = new Interest();
+                    boolean selected = false;
+                    if (isFirstTime) {
+                        selected = true;
+                    } else {
+                        if (selectedInterest != null)
+                            selected = selectedInterest.contains(String.valueOf(property));
+                    }
+                    interest.setSelected(selected);
+                    interest.setInterest(String.valueOf(property));
+                    mainList.add(interest);
+                }
+
+                return mainList;
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;*/
+
+
+            boolean isFirstTime = preferences.getBoolean(Constants.PREFERENCES_INTEREST, true);
+
+            Set<String> selectedInterest = preferences.getStringSet(Constants.PREFERENCES_SELECTED_INTERESTS, null);
+            //Create request
+            SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.INTEREST_LIST_BY_ID_METHOD_NAME);
+
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+                    SoapEnvelope.VER11);
+            envelope.dotNet = true;
+            //Set output SOAP object
+            PropertyInfo userId = new PropertyInfo();
+            userId.setName("UserId");
+            userId.setValue(fbProfile.getFbUserId());
+            userId.setType(String.class);
+
+            request.addProperty(userId);
+            envelope.setOutputSoapObject(request);
+            //Create HTTP call object
+            HttpTransportSE androidHttpTransport = new HttpTransportSE(Constants.INTEREST_LIST_BY_ID_URL);
+
+            try {
+                //Invole web service
+                androidHttpTransport.call(Constants.INTEREST_LIST_BY_ID_ACTION, envelope);
+                SoapObject resultRequestSOAP = (SoapObject) envelope.bodyIn;
+                SoapObject root = (SoapObject) resultRequestSOAP.getProperty("SendIntrestListByUserIdResult");
                 int count = root.getPropertyCount();
                 for (int i = 0; i < count; i++) {
                     Object property = root.getProperty(i);
@@ -267,7 +343,7 @@ public class InterestActivity extends AppCompatActivity {
                         int remainingInterests = strings.size() % 4;
                         TableRow tableRow = new TableRow(InterestActivity.this);
                         tableRow.setLayoutParams(paramsForTableRow);
-                        for (int i = 0; i < remainingInterests; i++) {
+                        for (int i = 1; i <=remainingInterests; i++) {
                             Button button = new Button(InterestActivity.this);
                             button.setLayoutParams(params);
                             Interest interest = mainList.get(totalInterests - i);
@@ -299,14 +375,22 @@ public class InterestActivity extends AppCompatActivity {
 
 
                 }
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
+            try
+            {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
 
+            }
+            catch(Exception e)
+            {
+
+            }
 
         }
     }

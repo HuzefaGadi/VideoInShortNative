@@ -73,12 +73,31 @@
         android:background="?attr/colorPrimary" >
 
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:src="@drawable/header_logo"
             android:adjustViewBounds="true" />
+
+
+        <Button
+            android:id="@+id/button_feedback"
+            android:layout_width="wrap_content"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/toolbarcolor"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/custom_button"
+
+            android:text="Feedback" />
+
+        </RelativeLayout>
 
 
         </android.support.v7.widget.Toolbar>

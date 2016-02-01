@@ -77,39 +77,43 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <Button
+            <ImageButton
                 android:id="@+id/button_back"
                 android:layout_width="wrap_content"
                 android:layout_height="?attr/actionBarSize"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="3dp"
                 android:layout_alignParentLeft="true"
-                android:textColor="@color/toolbarcolor"
-                android:background="@drawable/custom_button"
-                android:text="Back" />
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="15dp"
+                android:layout_marginTop="15dp"
+                android:adjustViewBounds="true"
+                android:background="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/back" />
 
             <TextView
                 android:id="@+id/hashtag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                android:textColor="#ffffff"
                 android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"
-                android:adjustViewBounds="true" />
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@+id/button_back"
+                android:adjustViewBounds="true"
+
+                android:textColor="#ffffff"
+                android:textSize="20dp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/button_followandunfollow"
                 android:layout_width="wrap_content"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_alignParentRight="true"
-                android:textColor="@color/toolbarcolor"
-                android:layout_marginTop="3dp"
                 android:layout_marginBottom="3dp"
                 android:layout_marginRight="10dp"
+                android:layout_marginTop="3dp"
                 android:background="@drawable/custom_button"
-                android:text="Follow" />
+                android:text="Follow"
+                android:textColor="@color/toolbarcolor" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 

@@ -38,6 +38,7 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -143,7 +144,7 @@ public class HashTagActivity extends AppCompatActivity {
         hashTag = getIntent().getStringExtra(Constants.HASHTAG);
         TextView mTitle = (TextView) mToolbar.findViewById(R.id.hashtag);
         mTitle.setText(hashTag);
-        Button back = (Button) mToolbar.findViewById(R.id.button_back);
+        ImageButton back = (ImageButton) mToolbar.findViewById(R.id.button_back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
