@@ -440,6 +440,21 @@ public class WebServiceUtility {
         mobNumber.setValue(fbProfile.getMobileNumber());
         mobNumber.setType(String.class);
 
+        PropertyInfo deviceName = new PropertyInfo();
+        deviceName.setName("DeviceModel");
+        deviceName.setValue(fbProfile.getDeviceModel());
+        deviceName.setType(String.class);
+
+        PropertyInfo os = new PropertyInfo();
+        os.setName("OS");
+        os.setValue(fbProfile.getOs());
+        os.setType(String.class);
+
+        PropertyInfo googleId = new PropertyInfo();
+        googleId.setName("GoogleId");
+        googleId.setValue(fbProfile.getGoogleId());
+        googleId.setType(String.class);
+
 
         request.addProperty(firstName);
         request.addProperty(lastName);
@@ -453,6 +468,9 @@ public class WebServiceUtility {
         request.addProperty(facebookProfileLink);
         request.addProperty(mobRegId);
         request.addProperty(mobNumber);
+        request.addProperty(deviceName);
+        request.addProperty(os);
+        request.addProperty(googleId);
 
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
                 SoapEnvelope.VER11);

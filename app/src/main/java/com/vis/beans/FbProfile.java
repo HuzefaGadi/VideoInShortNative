@@ -23,6 +23,12 @@ public class FbProfile {
     private String mobRegId;
     private String mobileNumber;
 
+    private String deviceModel;
+
+    private String os;
+
+    private String googleId;
+
     public String getFirstName() {
         return firstName;
     }
@@ -109,5 +115,29 @@ public class FbProfile {
 
     public void setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
+    }
+
+    public String getDeviceModel() {
+        return deviceModel;
+    }
+
+    public void setDeviceModel(String deviceModel) {
+        this.deviceModel = deviceModel;
+    }
+
+    public String getOs() {
+        return os;
+    }
+
+    public void setOs(String os) {
+        this.os = os;
+    }
+
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String goggleId) {
+        this.googleId = goggleId;
     }
 }

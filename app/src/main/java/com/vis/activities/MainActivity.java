@@ -15,6 +15,8 @@
  */
 package com.vis.activities;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -40,6 +42,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -77,7 +80,6 @@ import com.vis.utilities.GenericScrollListener;
 import com.vis.utilities.Utility;
 import com.vis.utilities.WebServiceUtility;
 
-import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
@@ -91,6 +93,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 
 
 /**
@@ -311,14 +314,32 @@ public class MainActivity extends AppCompatActivity {
 
         {
             SharedPreferences pref = getPreferences(mContext);
-
+            String androidVersion = android.os.Build.VERSION.RELEASE;
+            String deviceName = getDeviceName();
+            String googleId = null;
+            Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
+            Account[] accounts = AccountManager.get(getApplicationContext()).getAccounts();
+            for (Account account : accounts) {
+                if (emailPattern.matcher(account.name).matches()) {
+                    googleId = account.name;
+                    break;
+                }
+            }
             if (fbProfile == null) {
                 String responseFromFb = pref.getString(Constants.FB_USER_INFO, null);
                 if (responseFromFb != null) {
                     fbProfile = new Gson().fromJson(responseFromFb, FbProfile.class);
+                    if (fbProfile != null && fbProfile.getDeviceModel() == null) {
+                        fbProfile.setDeviceModel(deviceName);
+                        fbProfile.setOs(androidVersion);
+                        fbProfile.setGoogleId(googleId);
+                    }
                     new WebServiceUtility(getApplicationContext(), Constants.SEND_FACEBOOK_DATA, fbProfile);
                 }
             } else {
+                fbProfile.setDeviceModel(deviceName);
+                fbProfile.setOs(androidVersion);
+                fbProfile.setGoogleId(googleId);
                 new WebServiceUtility(getApplicationContext(), Constants.SEND_FACEBOOK_DATA, fbProfile);
             }
 
@@ -344,6 +365,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    public String getDeviceName() {
+        String manufacturer = Build.MANUFACTURER;
+        String model = Build.MODEL;
+        if (model.startsWith(manufacturer)) {
+            return capitalize(model);
+        } else {
+            return capitalize(manufacturer) + " " + model;
+        }
+    }
+
+
+    private String capitalize(String s) {
+        if (s == null || s.length() == 0) {
+            return "";
+        }
+        char first = s.charAt(0);
+        if (Character.isUpperCase(first)) {
+            return s;
+        } else {
+            return Character.toUpperCase(first) + s.substring(1);
+        }
+    }
 
     private void checkYouTubeApi() {
         YouTubeInitializationResult errorReason =
@@ -494,7 +538,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences pref = getPreferences(this);
         boolean showAlarm = pref.getBoolean(Constants.PREFERENCES_SHOW_ALARM, false);
         boolean alreadyRated = pref.getBoolean(Constants.PREFERENCES_ALREADY_RATED, false);
-        if ( showAlarm && !alreadyRated) {
+        if (showAlarm && !alreadyRated) {
             rateUs("You are awesome! If you feel the same about VideoInShort, please take a moment to rate it.");
         }
         GoogleAnalytics.getInstance(this).reportActivityStart(this);

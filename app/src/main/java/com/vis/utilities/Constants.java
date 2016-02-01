@@ -95,8 +95,8 @@ public class Constants {
     public static final String INTEREST_LIST_METHOD_NAME = "IntrestList";
 
     public static final String INTEREST_LIST_BY_ID_URL = "http://service.videoinshort.com/savefbuserdata.asmx";
-    public static final String INTEREST_LIST_BY_ID_ACTION = "http://tempuri.org/SendIntrestListByUserId";
-    public static final String INTEREST_LIST_BY_ID_METHOD_NAME = "SendIntrestListByUserId";
+    public static final String INTEREST_LIST_BY_ID_ACTION = "http://tempuri.org/SendintrestUserId";
+    public static final String INTEREST_LIST_BY_ID_METHOD_NAME = "SendintrestUserId";
 
     public static final String MULTIPLE_HASHTAGS_VIDEOS_URL = "http://service.videoinshort.com/savefbuserdata.asmx";
     public static final String MULTIPLE_HASHTAGS_VIDEOS_SOAP_ACTION = "http://tempuri.org/videoListWithMulipleHashTag";

@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.CheckBox;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.vis.R;
@@ -86,13 +84,11 @@ public class InterestActivity extends AppCompatActivity {
         });
 
         boolean isFirstTime = preferences.getBoolean(Constants.PREFERENCES_INTEREST, true);
-        if(isFirstTime)
-        {
+        if (isFirstTime) {
             cancel.setVisibility(View.GONE);
             submit.setText("Lets Get Started");
-        }
-        else
-        {
+
+        } else {
             submit.setText("Save");
             cancel.setVisibility(View.VISIBLE);
         }
@@ -171,9 +167,9 @@ public class InterestActivity extends AppCompatActivity {
             return null;*/
 
 
-            boolean isFirstTime = preferences.getBoolean(Constants.PREFERENCES_INTEREST, true);
 
-            Set<String> selectedInterest = preferences.getStringSet(Constants.PREFERENCES_SELECTED_INTERESTS, null);
+
+            Set<String> selectedInterest = new HashSet<>();
             //Create request
             SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.INTEREST_LIST_BY_ID_METHOD_NAME);
 
@@ -195,17 +191,21 @@ public class InterestActivity extends AppCompatActivity {
                 //Invole web service
                 androidHttpTransport.call(Constants.INTEREST_LIST_BY_ID_ACTION, envelope);
                 SoapObject resultRequestSOAP = (SoapObject) envelope.bodyIn;
-                SoapObject root = (SoapObject) resultRequestSOAP.getProperty("SendIntrestListByUserIdResult");
+                SoapObject selectedInterests = (SoapObject) resultRequestSOAP.getProperty("List2");
+                int countForInterests = selectedInterests.getPropertyCount();
+                for (int i = 0; i < countForInterests; i++) {
+                    Object property = selectedInterests.getProperty(i);
+                    String selected = String.valueOf(property);
+                    selectedInterest.add(selected);
+                }
+                SoapObject root = (SoapObject) resultRequestSOAP.getProperty("SendintrestUserIdResult");
                 int count = root.getPropertyCount();
                 for (int i = 0; i < count; i++) {
                     Object property = root.getProperty(i);
                     Interest interest = new Interest();
                     boolean selected = false;
-                    if (isFirstTime) {
-                        selected = true;
-                    } else {
-                        if (selectedInterest != null)
-                            selected = selectedInterest.contains(String.valueOf(property));
+                    if (selectedInterest != null) {
+                        selected = selectedInterest.contains(String.valueOf(property));
                     }
                     interest.setSelected(selected);
                     interest.setInterest(String.valueOf(property));
@@ -282,7 +282,7 @@ public class InterestActivity extends AppCompatActivity {
 
                             Button button2 = new Button(InterestActivity.this);
                             button2.setLayoutParams(params);
-                            button2.setTag(i+1);
+                            button2.setTag(i + 1);
                             button2.setText(strings.get(i + 1).getInterest());
                             Interest interest2 = mainList.get(i + 1);
                             if (!interest2.isSelected()) {
@@ -298,7 +298,7 @@ public class InterestActivity extends AppCompatActivity {
 
                             Button button3 = new Button(InterestActivity.this);
                             button3.setLayoutParams(params);
-                            button3.setTag(i+2);
+                            button3.setTag(i + 2);
 
                             button3.setText(strings.get(i + 2).getInterest());
                             Interest interest3 = mainList.get(i + 2);
@@ -314,7 +314,7 @@ public class InterestActivity extends AppCompatActivity {
 
                             Button button4 = new Button(InterestActivity.this);
                             button4.setLayoutParams(params);
-                            button4.setTag(i+3);
+                            button4.setTag(i + 3);
 
                             button4.setText(strings.get(i + 3).getInterest());
                             Interest interest4 = mainList.get(i + 3);
@@ -343,11 +343,11 @@ public class InterestActivity extends AppCompatActivity {
                         int remainingInterests = strings.size() % 4;
                         TableRow tableRow = new TableRow(InterestActivity.this);
                         tableRow.setLayoutParams(paramsForTableRow);
-                        for (int i = 1; i <=remainingInterests; i++) {
+                        for (int i = 1; i <= remainingInterests; i++) {
                             Button button = new Button(InterestActivity.this);
                             button.setLayoutParams(params);
                             Interest interest = mainList.get(totalInterests - i);
-                            button.setTag(totalInterests-i);
+                            button.setTag(totalInterests - i);
                             button.setText(strings.get(totalInterests - i).getInterest());
                             button.setOnClickListener(onClickListener);
                             if (!interest.isSelected()) {
@@ -380,15 +380,12 @@ public class InterestActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            try
-            {
+            try {
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
 
-            }
-            catch(Exception e)
-            {
+            } catch (Exception e) {
 
             }
 
