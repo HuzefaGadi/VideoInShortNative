@@ -827,7 +827,7 @@ public class MainActivity extends AppCompatActivity {
         protected List<VideoEntry> doInBackground(Void... params) {
 
             Set<String> selectedInterest = prefs.getStringSet(Constants.PREFERENCES_SELECTED_INTERESTS, null);
-            if (selectedInterest != null && selectedInterest.size() > 0) {
+            if (selectedInterest != null) {
                 return getVideosListWithHashTags(selectedInterest);
             } else {
                 return getVideosList();
@@ -953,7 +953,14 @@ public class MainActivity extends AppCompatActivity {
         for (String interest : interests) {
             hashtags += interest + ",";
         }
-        hashtags = hashtags.substring(0, hashtags.length() - 1);
+        if(hashtags.length() > 0)
+        {
+            hashtags = hashtags.substring(0, hashtags.length() - 1);
+        }
+        else
+        {
+            hashtags = "";
+        }
         //Property which holds input parameters
         PropertyInfo hashtag = new PropertyInfo();
         //Set Name
