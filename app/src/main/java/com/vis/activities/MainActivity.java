@@ -256,14 +256,19 @@ public class MainActivity extends AppCompatActivity {
             public void onLoadMore(int current_page) {
 
                 int interimCount = adapter.getItemCount() + 33;
-                if (interimCount < 103) {
+                if (interimCount < 103 && interimCount <= mainList.size()) {
 
-                    if (mainList.size() >= 103) {
-                        adapter.setListEntries(mainList.subList(0, adapter.getItemCount() + 33));
-                        adapter.notifyDataSetChanged();
-                        recyclerView.requestLayout();
-                    }
+                    adapter.setListEntries(mainList.subList(0, adapter.getItemCount() + 33));
+                    adapter.notifyDataSetChanged();
+                    recyclerView.requestLayout();
 
+
+                }
+                else  if(interimCount < 103 && interimCount > mainList.size() && adapter.getItemCount() < mainList.size())
+                {
+                    adapter.setListEntries(mainList.subList(0, mainList.size()));
+                    adapter.notifyDataSetChanged();
+                    recyclerView.requestLayout();
                 }
 
 
@@ -534,7 +539,7 @@ public class MainActivity extends AppCompatActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
 
-        System.out.println("TRANSITION ONSTART");
+
         SharedPreferences pref = getPreferences(this);
         boolean showAlarm = pref.getBoolean(Constants.PREFERENCES_SHOW_ALARM, false);
         boolean alreadyRated = pref.getBoolean(Constants.PREFERENCES_ALREADY_RATED, false);
@@ -953,12 +958,9 @@ public class MainActivity extends AppCompatActivity {
         for (String interest : interests) {
             hashtags += interest + ",";
         }
-        if(hashtags.length() > 0)
-        {
+        if (hashtags.length() > 0) {
             hashtags = hashtags.substring(0, hashtags.length() - 1);
-        }
-        else
-        {
+        } else {
             hashtags = "";
         }
         //Property which holds input parameters

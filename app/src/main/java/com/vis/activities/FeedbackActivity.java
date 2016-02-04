@@ -3,6 +3,7 @@ package com.vis.activities;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +29,13 @@ public class FeedbackActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
+
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle("");
+       /* TextView title = (TextView) mToolbar.findViewById(R.id.toolbar_title);
+        Typeface custom_font = Typeface.createFromAsset(getAssets(), "Calibri.ttf");
+        title.setTypeface(custom_font);*/
+        setSupportActionBar(mToolbar);
         email = (EditText) findViewById(R.id.input_email);
         feedback = (EditText) findViewById(R.id.input_feedback);
         submit = (Button) findViewById(R.id.submit);

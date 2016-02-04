@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,10 @@ public class InterestActivity extends AppCompatActivity {
         mainList = new ArrayList<Interest>();
         preferences = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
         editor = preferences.edit();
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle("");
+       
+        setSupportActionBar(mToolbar);
 
         Button submit = (Button) findViewById(R.id.submit);
         Button cancel = (Button) findViewById(R.id.cancel);

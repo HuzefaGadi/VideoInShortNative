@@ -122,12 +122,14 @@
 
 
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="http"
+                <data
                     android:host="videoinshort.com"
-                    android:pathPrefix="/video" />
+                    android:pathPrefix="/video"
+                    android:scheme="http" />
 
 
                 <!--<data
@@ -144,7 +146,7 @@
                     android:pathPrefix="/video"
                     android:scheme="http" />-->
             </intent-filter>
-          </activity>
+        </activity>
         <activity
             android:name=".activities.ShowVideoActivity"
             android:screenOrientation="landscape"
@@ -166,15 +168,17 @@
         </activity>
         <activity
             android:name=".activities.FeedbackActivity"
-            android:label="@string/title_activity_feedback"></activity>
+            android:label="@string/title_activity_feedback"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".activities.HashTagActivity"
             android:label="@string/title_activity_hash_tag"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".activities.InterestActivity"
+        <activity
+            android:name=".activities.InterestActivity"
             android:screenOrientation="landscape"
-            android:label="@string/interest_activity"></activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
