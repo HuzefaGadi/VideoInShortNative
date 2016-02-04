@@ -223,14 +223,19 @@ public class HashTagActivity extends AppCompatActivity {
             public void onLoadMore(int current_page) {
 
                 int interimCount = adapter.getItemCount() + 33;
-                if (interimCount < 103) {
+                if (interimCount < 103 && interimCount <= mainList.size()) {
 
-                    if (mainList.size() >= 103) {
-                        adapter.setListEntries(mainList.subList(0, adapter.getItemCount() + 33));
-                        adapter.notifyDataSetChanged();
-                        recyclerView.requestLayout();
-                    }
+                    adapter.setListEntries(mainList.subList(0, adapter.getItemCount() + 33));
+                    adapter.notifyDataSetChanged();
+                    recyclerView.requestLayout();
 
+
+                }
+                else  if(interimCount < 103 && interimCount > mainList.size() && adapter.getItemCount() < mainList.size())
+                {
+                    adapter.setListEntries(mainList.subList(0, mainList.size()));
+                    adapter.notifyDataSetChanged();
+                    recyclerView.requestLayout();
                 }
 
 

@@ -772,7 +772,7 @@ public class WebServiceUtility {
         //Property which holds input parameters
         PropertyInfo emlId = new PropertyInfo();
         //Set Name
-        emlId.setName("Emailid");
+        emlId.setName("EmailId");
         //Set Value
         emlId.setValue(feedback.getEmailId());
         //Set dataType
