@@ -86,7 +86,7 @@ public class InterestActivity extends AppCompatActivity {
         boolean isFirstTime = preferences.getBoolean(Constants.PREFERENCES_INTEREST, true);
         if (isFirstTime) {
             cancel.setVisibility(View.GONE);
-            submit.setText("Lets Get Started");
+            submit.setText("Let's Get Started");
 
         } else {
             submit.setText("Save");

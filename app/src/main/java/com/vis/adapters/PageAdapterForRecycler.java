@@ -99,8 +99,8 @@ public class PageAdapterForRecycler extends RecyclerView.Adapter<RecyclerView.Vi
        /* width = (width * 80) / 100;
         height = (width * 55) / 100;*/
 
-        width = (width * 90) / 100;
-        height = (width * 55) / 100;
+        width = (width * 75) / 100;
+        height = (width * 68) / 100;
 
         imageLoadingListener = new ImageLoadingListener();
         imageLoader = ImageLoader.getInstance();

@@ -297,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
         Typeface custom_font = Typeface.createFromAsset(getAssets(), "Calibri.ttf");
         title.setTypeface(custom_font);*/
         setSupportActionBar(mToolbar);
-        Button feedbackButton = (Button) mToolbar.findViewById(R.id.button_feedback);
+       /* Button feedbackButton = (Button) mToolbar.findViewById(R.id.button_feedback);
         feedbackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -306,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
 
             }
-        });
+        });*/
 
     }
 
@@ -732,12 +732,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
             return true;
-        } /*else if (id == R.id.action_feedback) {
+        } else if (id == R.id.action_feedback) {
             Intent intent = new Intent(this, FeedbackActivity.class);
             intent.putExtra(Constants.MENU_SETTINGS, true);
             startActivity(intent);
             return true;
-        }*/ else if (id == R.id.action_interest) {
+        } else if (id == R.id.action_interest) {
             Intent intent = new Intent(this, InterestActivity.class);
             intent.putExtra(Constants.MENU_SETTINGS, true);
             startActivityForResult(intent, Constants.REQUEST_CODE_FOR_INTEREST);

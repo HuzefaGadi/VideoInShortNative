@@ -84,7 +84,7 @@
             android:adjustViewBounds="true" />
 
 
-        <Button
+        <!--<Button
             android:id="@+id/button_feedback"
             android:layout_width="wrap_content"
             android:layout_height="?attr/actionBarSize"
@@ -95,7 +95,7 @@
             android:layout_marginRight="10dp"
             android:background="@drawable/custom_button"
 
-            android:text="Feedback" />
+            android:text="Feedback" />-->
 
         </RelativeLayout>
 

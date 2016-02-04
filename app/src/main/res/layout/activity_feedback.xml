@@ -7,7 +7,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.vis.activities.FeedbackActivity">
-    <TextView
+    <!--<TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -15,7 +15,7 @@
         android:id="@+id/title"
         android:textColor="@color/textcolor"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true" />-->
 
 
 
@@ -62,12 +62,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="2">
 
 
         <Button
-            android:layout_weight="1"
+            android:layout_weight=".5"
             android:layout_marginRight="30dp"
             android:id="@+id/cancel"
             android:background="@drawable/custom_button_for_white_background"
@@ -79,7 +80,7 @@
             />
 
         <Button
-            android:layout_weight="1"
+            android:layout_weight=".5"
             android:id="@+id/submit"
             android:textColor="#ffffff"
             android:background="@drawable/custom_button_for_white_background"
